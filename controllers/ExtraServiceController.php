@@ -52,6 +52,7 @@ class ExtraServiceController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->date = date("Y-m-d", strtotime($model->date)) . ' ' . $model->time;
+            $model->rate = $model->serviceitem->rate;
 
             if ($model->save()){
                 return $this->redirect(['room-reservation/view', 'id' => $model->roomreservationid]);   
@@ -81,6 +82,7 @@ class ExtraServiceController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->date = date("Y-m-d", strtotime($model->date)) . ' ' . $model->time;
+            $model->rate = $model->serviceitem->rate;
 
             if ($model->save()){
                 return $this->redirect(['room-reservation/view', 'id' => $model->roomreservationid]);   

@@ -12,6 +12,7 @@ use Yii;
  * @property integer $roomreservationid
  * @property integer $quantity
  * @property string $date 
+ * @property integer $rate
  *
  * @property PsServiceitem $serviceitem
  * @property PsRoomreservation $roomreservation
@@ -35,7 +36,7 @@ class ExtraService extends \yii\db\ActiveRecord
     {
         return [
             [['serviceitemid', 'roomreservationid', 'quantity', 'date', 'time'], 'required'],
-            [['serviceitemid', 'roomreservationid', 'quantity'], 'integer'],
+            [['serviceitemid', 'roomreservationid', 'quantity', 'rate'], 'integer'],
             [['date'], 'safe']
         ];
     }

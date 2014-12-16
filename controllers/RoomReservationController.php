@@ -89,7 +89,7 @@ class RoomReservationController extends Controller
                 $model->out = date("Y-m-d", strtotime($model->out));
 
             if ($model->save()){
-               return $this->redirect(['view', 'id' => $model->roomreservationid]); 
+               return $this->redirect(['index']); 
             }
 
             if ($model->out != null)
@@ -129,7 +129,7 @@ class RoomReservationController extends Controller
                 $model->out = date("Y-m-d", strtotime($model->out));
 
             if ($model->save()){
-               return $this->redirect(['view', 'id' => $model->roomreservationid]); 
+               return $this->redirect(['index']); 
             }
             
             $model->startdate = $strdate;
