@@ -88,8 +88,32 @@ class RoomReservationController extends Controller
             if ($model->out != null)
                 $model->out = date("Y-m-d", strtotime($model->out));
 
-            if ($model->save()){
-               return $this->redirect(['index']); 
+            $connection = \Yii::$app->db;
+            $transaction = $connection->beginTransaction(); 
+
+            $acc = true;
+
+            if (!$model->save()){
+                $acc = false;
+            }
+
+            $model_rate = new \app\models\RoomReservationRate();
+            $roomtype = \app\models\RoomType::find()->where(['roomtypeid'=>$model->room->roomtypeid])->one();
+            $model_rate->roomreservationid = $model->roomreservationid;
+            $model_rate->rate = $roomtype->rate;
+            $model_rate->childcharge = $roomtype->childcharge;
+            $model_rate->adultcharge = $roomtype->adultcharge;
+            $model_rate->weekendrate = $roomtype->weekendrate;
+
+            if (!$model_rate->save()){
+                $acc = false;
+            }
+
+            if ($acc){
+                $transaction->commit();   
+                return $this->redirect(['index']); 
+            }else{
+                $transaction->rollback();
             }
 
             if ($model->out != null)
@@ -129,7 +153,7 @@ class RoomReservationController extends Controller
                 $model->out = date("Y-m-d", strtotime($model->out));
 
             if ($model->save()){
-               return $this->redirect(['index']); 
+                return $this->redirect(['index']); 
             }
             
             $model->startdate = $strdate;
@@ -140,7 +164,7 @@ class RoomReservationController extends Controller
 
             return $this->render('create', [
                 'model' => $model,
-            ]);  
+            ]); 
         } else {
             $model->startdate = date("d-M-Y", strtotime($model->startdate));
             $model->enddate = date("d-M-Y", strtotime($model->enddate));

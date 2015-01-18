@@ -93,7 +93,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'type' => DatePicker::TYPE_INLINE,
                 'value' => date("D, d-M-Y"),
                 'pluginOptions' => [
-                    'format' => 'D, dd-M-yyyy'
+                    'format' => 'D, dd-M-yyyy',
+                    'hideInput'=>1, 
                 ],
                 'pluginEvents' => [
                     'beforeShowDay' => 'function(e){ alert(1); }'
@@ -137,6 +138,9 @@ $this->registerJs("
         var roomtype = $('#room-type-id').val();
         var equipments = $('#equipment-id').val();
         var date = $('#date-text').val();
+        if (date == ''){
+            date = '".date("D, d-M-Y")."'
+        }
         
         $('#table-room tbody').empty();
         $('#table-room tbody').append('<tr id=\'loader\'><td colspan=7 class=text-center><img style=\'text-align:center\' width=\'30px\' src=\'".yii\helpers\BaseUrl::base()."/css/loading.gif\'></td></tr>');
@@ -148,7 +152,11 @@ $this->registerJs("
             data: {'date':date, 'room':room, 'roomtype':roomtype, 'equipments':equipments},
             success: function(result){
 
-                $('#header').html($('#date-text').val());
+                if ($('#date-text').val() == ''){
+                    $('#header').html('".date("D, d-M-Y")."');
+                }else{
+                    $('#header').html($('#date-text').val());   
+                }
 
                 if(result.length > 0){
 

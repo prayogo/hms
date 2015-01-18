@@ -58,6 +58,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     [
                                         'attribute' => 'customerid',
                                         'value' => $model->customer->name],
+                                    'adult',
+                                    'child',
                                     [
                                         'attribute' => 'startdate',
                                         'label' => 'Start Date',
@@ -69,7 +71,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                     [
                                         'attribute' => 'deposit',
                                         'value' => str_replace(',', '.', number_format($model->deposit))],
-                                    'cancel',
+                                    [
+                                        'attribute' => 'cancel',
+                                        'value' => $model->cancel == 'Y' ? 'Yes' : 'No' ],
                                     [
                                         'attribute' => 'roomstatusid',
                                         'value' => $model->roomStatusText,

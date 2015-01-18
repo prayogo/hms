@@ -24,7 +24,8 @@ if (!$model->isNewRecord){
 }
 
     $data = [];
-    $data += yii\helpers\ArrayHelper::map(\app\models\Room::find()->asArray()->orderBy('name')->all(), 'roomid', 'name');
+    $sql = "select ps_room.roomid, concat(ps_room.name, ' (Adult: ', maxadult, ', Child: ', maxchild, ')') as name from ps_room left join ps_roomtype on ps_room.roomtypeid = ps_roomtype.roomtypeid";
+    $data += yii\helpers\ArrayHelper::map(\app\models\Room::findBySql($sql)->asArray()->all(), 'roomid', 'name');
     echo $form->field($model, 'roomid')->widget(Select2::classname(), [
         'data' => $data,
         'disabled' => $disabled,
@@ -95,6 +96,22 @@ if (!$model->isNewRecord){
     ?>
 
     <?php
+        echo $form->field($model, 'adult')->textInput(
+        [
+            'data-mask'=>'000.000.000.000.000',
+            'data-mask-reverse'=>'true',
+        ])
+    ?>
+
+    <?php
+        echo $form->field($model, 'child')->textInput(
+        [
+            'data-mask'=>'000.000.000.000.000',
+            'data-mask-reverse'=>'true',
+        ])
+    ?>
+
+    <?php
         echo $form->field($model, 'out')->widget(DatePicker::classname(), [
             'options' => ['placeholder' => 'Enter check out date ...'],
             'pluginOptions' => [
@@ -105,9 +122,8 @@ if (!$model->isNewRecord){
     ?>
 
     <?php
-        echo $form->field($model, 'cancel')->radioList(['Y' => 'Yes', 'N' => 'No'],['separator'=>'<span style="margin-right:20px"></span>']);
+    echo $form->field($model, 'cancel')->radioList(['Y' => 'Yes', 'N' => 'No'],['separator'=>'<span style="margin-right:20px"></span>']);
     ?>
-    
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

@@ -92,6 +92,9 @@ AppAsset::register($this);
                             [
                                 'label'=>'<img height="20px" src="'.\Yii::$app->request->BaseUrl.'/img/reservation.png"/> Room Reservations', 
                                 'url'=>['/room-reservation/index']],
+                            [
+                                'label'=>'<img height="20px" src="'.\Yii::$app->request->BaseUrl.'/img/payment.png"/> Payments', 
+                                'url'=>['/payment/index']],
                         ]
                     ],
                     Yii::$app->user->isGuest ?

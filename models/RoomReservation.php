@@ -15,7 +15,9 @@ use Yii;
  * @property integer $deposit
  * @property string $cancel
  * @property integer $roomstatusid
- * @property string $out 
+ * @property string $out
+ * @property integer $child
+ * @property integer $adult
  *
  * @property PsExtraservice[] $psExtraservices
  * @property PsRoom $room
@@ -38,11 +40,10 @@ class RoomReservation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['roomid', 'customerid', 'startdate', 'enddate', 'roomstatusid', 'deposit'], 'required'],
-            [['roomid', 'customerid', 'roomstatusid'], 'integer'],
+            [['roomid', 'customerid', 'startdate', 'enddate', 'roomstatusid', 'child', 'adult'], 'required'],
+            [['roomid', 'customerid', 'deposit', 'roomstatusid', 'child', 'adult'], 'integer'],
             [['startdate', 'enddate', 'out'], 'safe'],
             [['cancel'], 'string', 'max' => 1],
-            ['deposit', 'string', 'max' => 20]
         ];
     }
 
@@ -55,12 +56,14 @@ class RoomReservation extends \yii\db\ActiveRecord
             'roomreservationid' => 'ID',
             'roomid' => 'Room',
             'customerid' => 'Customer',
-            'startdate' => 'Date',
-            'enddate' => 'Date',
+            'startdate' => 'Start Date',
+            'enddate' => 'End Date',            
             'deposit' => 'Deposit',
             'cancel' => 'Cancel',
             'roomstatusid' => 'Status',
             'out' => 'Checking Out',
+            'child' => 'Child',
+            'adult' => 'Adult',
         ];
     }
 
@@ -97,6 +100,14 @@ class RoomReservation extends \yii\db\ActiveRecord
     }
 
     public function getRoomStatusText(){
-        return '<span class="label" style="background-color:'.$this->roomstatus->color.'">'.$this->roomstatus->name.'</span>';
+       return '<span class="label" style="background-color:'.$this->roomstatus->color.'">'.$this->roomstatus->name.'</span>';
+    }
+
+    /**
+    * @return \yii\db\ActiveQuery
+    */
+    public function getRoomreservationrate()
+    {
+        return $this->hasOne(RoomReservationRate::className(), ['roomreservationid' => 'roomreservationid']);
     }
 }
