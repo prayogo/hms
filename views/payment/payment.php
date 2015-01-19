@@ -17,15 +17,15 @@
 <thead>
 <tr>
 	<td>
-		<div style="float:left">
-			<img src="<?=\Yii::$app->request->BaseUrl?>/img/hotel.png" height="105px">
+		<div style="float:left; margin-right:10px; padding-top:6px;border-right: 1px solid #E5E5E5;padding-right: 10px;height: 93px;">
+			<img src="<?=\Yii::$app->request->BaseUrl?>/img/logo.png" height="80px">
 		</div>
 		<div style="font-size:16px; margin-bottom:20px;">
 			<div>
-				<span style="font-size: 24px !important;color: RGB(192,0,0) !important;">H </span> 
-				<span style="color: RGB(192,0,0) !important;font-size: 20px !important;" id="otel"> O T E L &nbsp;</span>   
-				<span style="font-size: 24px !important;color: RGB(0,112,192) !important;"> D </span> 
-				<span style="color: RGB(0,112,192) !important;font-size: 20px !important;"> Y V A</span>
+				<span style="font-size: 26px !important;color: RGB(192,0,0) !important;">H </span> 
+				<span style="color: RGB(192,0,0) !important;font-size: 22px !important;" id="otel"> O T E L &nbsp;</span>   
+				<span style="font-size: 26px !important;color: RGB(0,112,192) !important;"> D </span> 
+				<span style="color: RGB(0,112,192) !important;font-size: 22px !important;"> Y V A</span>
 			</div>
 			<div>
 				E-mail: <?= $hotel->email ?>
@@ -257,5 +257,5 @@
 </body>
 </html>
 <script>
-//window.print();
+window.print();
 </script>
