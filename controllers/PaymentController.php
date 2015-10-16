@@ -150,8 +150,8 @@ class PaymentController extends Controller
     public function actionRoomReservation($customer)
     {
         $query = new \yii\db\Query;
-        $query->select(['ps_roomreservation.roomreservationid', 'ps_room.name', 'DATE_FORMAT(ps_roomreservation.startdate, \'%d-%b-%Y\') as startdate', 'DATE_FORMAT(ps_roomreservation.enddate, \'%d-%b-%Y\') as enddate', 'DATE_FORMAT(ps_roomreservation.out, \'%d-%b-%Y\') as checkout'])
-            ->distinct(['ps_roomreservation.roomreservationid', 'ps_room.name', 'DATE_FORMAT(ps_roomreservation.startdate, \'%d-%b-%Y\') as startdate', 'DATE_FORMAT(ps_roomreservation.enddate, \'%d-%b-%Y\') as enddate', 'DATE_FORMAT(ps_roomreservation.out, \'%d-%b-%Y\') as checkout'])
+        $query->select(['ps_roomreservation.roomreservationid', 'ps_room.name', 'ps_roomreservation.deposit', 'DATE_FORMAT(ps_roomreservation.startdate, \'%d-%b-%Y\') as startdate', 'DATE_FORMAT(ps_roomreservation.enddate, \'%d-%b-%Y\') as enddate', 'DATE_FORMAT(ps_roomreservation.out, \'%d-%b-%Y\') as checkout'])
+            ->distinct(['ps_roomreservation.roomreservationid', 'ps_room.name', 'ps_roomreservation.deposit', 'DATE_FORMAT(ps_roomreservation.startdate, \'%d-%b-%Y\') as startdate', 'DATE_FORMAT(ps_roomreservation.enddate, \'%d-%b-%Y\') as enddate', 'DATE_FORMAT(ps_roomreservation.out, \'%d-%b-%Y\') as checkout'])
             ->from('ps_customer')
             ->innerJoin('ps_roomreservation', 'ps_roomreservation.customerid = ps_customer.customerid and ps_roomreservation.cancel = "N" and ps_roomreservation.out is not null')
             ->leftJoin('ps_room', 'ps_roomreservation.roomid = ps_room.roomid')

@@ -66,7 +66,7 @@ use kartik\date\DatePicker;
 		  	success: function(result){
                 if(result.length > 0){
                     for(var i = 0; i < result.length; i++){
-                        $('#reservation').append('<tr><td><input class="room-reservation" type="checkbox" name="Payment[RoomReservationPayment]['+(i+1)+']" id="room-reservation-'+result[i].roomreservationid+'" value="'+result[i].roomreservationid+'"></td><td>'+result[i].name+'</td><td>'+result[i].startdate+'</td><td>'+result[i].enddate+'</td><td>'+result[i].checkout+'</td></tr>');
+                        $('#reservation').append('<tr><td><input class="room-reservation" type="checkbox" name="Payment[RoomReservationPayment]['+(i+1)+']" id="room-reservation-'+result[i].roomreservationid+'" value="'+result[i].roomreservationid+'"></td><td>'+result[i].name+'</td><td>'+result[i].startdate+'</td><td>'+result[i].enddate+'</td><td>'+result[i].checkout+'</td><td>'+currency+' '+result[i].deposit+'</td></tr>');
                     }    
 
                     $('.room-reservation').change(function(e){
@@ -142,6 +142,7 @@ use kartik\date\DatePicker;
     				<th>Start Date</th>
     				<th>End Date</th>
     				<th>Check Out</th>
+    				<th>Deposit</th>
     			</thead>
     			<tbody id="reservation">
                     <tr>
