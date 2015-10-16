@@ -9,6 +9,9 @@ nbproject
 .project
 .settings
 
+# composer vendor dir
+/vendor
+
 # windows thumbnail cache
 Thumbs.db
 
