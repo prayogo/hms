@@ -15,11 +15,31 @@ $this->title = 'Hotel Information: Update';
 $this->params['breadcrumbs'][] = ['label' => 'Hotel Information', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
+<section class="content-header">
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?= yii\widgets\Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+  ]) ?>
+</section>
+
+<section class="content">
+
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title"><i class="glyphicon glyphicon-home"></i> Hotel Information</h3>
+            <div class="box-tools pull-right">
+                <?= Html::a('Update', ['update'], ['class' => 'btn btn-primary']) ?>
+            </div>
+        </div>
+        <div class="box-body">
+            
+        </div>
+    </div>
+
+</section>
+
 <div class="hotel-index">
 
-    <h1>
-        <img height="50px" src="<?=\Yii::$app->request->BaseUrl?>/img/hotel.png"/>
-        <span style="vertical-align: middle;"><?= Html::encode($this->title) ?></span></h1>
     
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php $form = ActiveForm::begin(['options'=>['class'=>'form-horizontal']]); ?>

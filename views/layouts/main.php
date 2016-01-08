@@ -1,14 +1,14 @@
 <?php
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use app\assets\VendorAsset;
 use kartik\icons\Icon;
+use yii\helpers\Url;
+
 
 /* @var $this \yii\web\View */
 /* @var $content string */
-
+VendorAsset::register($this);
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -29,7 +29,7 @@ AppAsset::register($this);
     <!--div class="wrap">
         
         <?php
-
+/*
             NavBar::begin([
                 'brandLabel' => "Dyva Hotel",
                 'brandUrl' => Yii::$app->homeUrl,
@@ -83,22 +83,7 @@ AppAsset::register($this);
                                 'label'=>'<img height="20px" src="'.\Yii::$app->request->BaseUrl.'/img/user.png"/> Users Application', 
                                 'url'=>['/user/index']],
                     ]] : '',
-                    Yii::$app->user->isGuest ? '' :
-                    [
-                        'label' => 'Reservation', 
-                        'url' => ['#'], 
-                        'items'=>[
-                            [
-                                'label'=>'<img height="20px" src="'.\Yii::$app->request->BaseUrl.'/img/customer.png"/> Customers', 
-                                'url'=>['/customer/index']],
-                            [
-                                'label'=>'<img height="20px" src="'.\Yii::$app->request->BaseUrl.'/img/reservation.png"/> Room Reservations', 
-                                'url'=>['/room-reservation/index']],
-                            [
-                                'label'=>'<img height="20px" src="'.\Yii::$app->request->BaseUrl.'/img/payment.png"/> Payments', 
-                                'url'=>['/payment/index']],
-                        ]
-                    ],
+
                     Yii::$app->user->isGuest ?
                         ['label' => 'Login', 'url' => ['/site/login']] :
                         ['label' => 'Logout (' . Yii::$app->user->identity->fullname . ')',
@@ -107,19 +92,11 @@ AppAsset::register($this);
                 ],
                 'encodeLabels' => false
             ]);
-            NavBar::end();
+            NavBar::end();*/
         ?>
         
+    </div-->
 
-        <div class="container">
-            <?= Breadcrumbs::widget([
-                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-            ]) ?>
-            <?= $content ?>
-        </div>
-    </div>
-
-    -->
 
 </body>
 
@@ -195,13 +172,11 @@ AppAsset::register($this);
           </div>
         </nav>
       </header>
-      <!-- Left side column. contains the logo and sidebar -->
+
       <aside class="main-sidebar">
 
-        <!-- sidebar: style can be found in sidebar.less -->
         <section class="sidebar">
 
-          <!-- Sidebar user panel (optional) -->
           <div class="user-panel">
             <div class="pull-left image">
               <img src="<?=\Yii::$app->request->BaseUrl?>/AdminLTE/img/user2-160x160.jpg" class="img-circle" alt="User Image">
@@ -213,7 +188,6 @@ AppAsset::register($this);
             </div>
           </div>
 
-          <!-- search form (Optional) -->
           <form action="#" method="get" class="sidebar-form">
             <div class="input-group">
               <input type="text" name="q" class="form-control" placeholder="Search...">
@@ -222,50 +196,58 @@ AppAsset::register($this);
               </span>
             </div>
           </form>
-          <!-- /.search form -->
 
-          <!-- Sidebar Menu -->
           <ul class="sidebar-menu">
             <li class="header">HEADER</li>
-            <!-- Optionally, you can add icons to the links -->
-            <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
-            <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+            <li><a href="<?= Url::toRoute('site/index') ?>"><i class="fa fa-link"></i> <span>Halaman Utama</span></a></li>
+
+            <?php if (isset(Yii::$app->user->identity->admin) && Yii::$app->user->identity->admin == "Y"){ ?>
             <li class="treeview">
-              <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <a href="#"><i class="fa fa-link"></i> <span>Admin</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li><a href="#">Link in level 2</a></li>
-                <li><a href="#">Link in level 2</a></li>
+                <li><a href="<?= Url::toRoute('hotel/index') ?>">Informasi Hotel</a></li>
+                <li class="divider"></li>
+                <li><a href="<?= Url::toRoute('equipment/index') ?>">Fasilitas</a></li>
+                <li><a href="<?= Url::toRoute('floor/index') ?>">Lantai</a></li>
+                <li><a href="<?= Url::toRoute('identification-type/index') ?>">Tipe Identifikasi</a></li>
+                <li><a href="<?= Url::toRoute('room-status/index') ?>">Status Kamar</a></li>
+                <li><a href="<?= Url::toRoute('service-item/index') ?>">Produk Jual</a></li>
+                <li class="divider"></li>
+                <li><a href="<?= Url::toRoute('room-type/index') ?>">Tipe Kamar</a></li>
+                <li><a href="<?= Url::toRoute('room/index') ?>">Kamar</a></li>
+                <li><a href="<?= Url::toRoute('user/index') ?>">User Aplikasi</a></li>
               </ul>
             </li>
+            <?php } ?>
+                    
+                            
+            <?php if (!Yii::$app->user->isGuest){ ?>
+            <li class="treeview">
+              <a href="#"><i class="fa fa-link"></i> <span>Reservasi Kamar</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li><a href="<?= Url::toRoute('customer/index') ?>">Pelanggan</a></li>
+                <li class="divider"></li>
+                <li><a href="<?= Url::toRoute('room-reservation/index') ?>">Reservasi</a></li>
+                <li><a href="<?= Url::toRoute('payment/index') ?>">Pembayaran</a></li>
+              </ul>
+            </li>
+            <?php } ?>
+
           </ul><!-- /.sidebar-menu -->
+
         </section>
         <!-- /.sidebar -->
       </aside>
 
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-          <h1>
-            Page Header
-            <small>Optional description</small>
-          </h1>
-          <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-          ]) ?>
-        </section>
 
-        <!-- Main content -->
-        <section class="content">
+        <?php $this->beginBody() ?>
 
-          <!-- Your Page Content Here -->
-            <?php $this->beginBody() ?>
+        <?= $content ?>
 
-            <?= $content ?>
+        <?php $this->endBody() ?>
 
-            <?php $this->endBody() ?>
-
-        </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
 
       <!-- Main Footer -->
@@ -344,3 +326,16 @@ AppAsset::register($this);
   </body>
 </html>
 <?php $this->endPage() ?>
+
+<style type="text/css">
+    .divider{
+        border-bottom: 1px solid #D6D6D6;
+        margin-left: 5px !important;
+        margin-right: 10px !important;
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+    }
+    .select2-selection__rendered{
+      margin-top: 1px !important
+    }
+</style>
