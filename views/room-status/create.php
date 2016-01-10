@@ -10,14 +10,19 @@ $this->title = 'Create';
 $this->params['breadcrumbs'][] = ['label' => 'Room Status', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="room-status-create">
 
-    <h1>
-        <img height="50px" src="<?=\Yii::$app->request->BaseUrl?>/img/status.png"/>
-        <span style="vertical-align: middle;">Room Status: <?= Html::encode($this->title) ?></span></h1>
+<section class="content-header">
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?= yii\widgets\Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+  ]) ?>
+</section>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
 
-</div>
+<section class="content">
+    <div class="box box-default">
+    	<?= $this->render('_form', [
+	        'model' => $model,
+	    ]) ?>
+    </div>
+</section>

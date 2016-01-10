@@ -9,20 +9,15 @@ use kartik\color\ColorInput;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="room-status-form">
+<?php $form = ActiveForm::begin(); ?>
 
-    <?php $form = ActiveForm::begin(); ?>
-
+<div class="box-body">
     <?= $form->field($model, 'name')->textInput(['maxlength' => 50]) ?>
-
     <?= $form->field($model, 'color')->widget(ColorInput::classname(), [
     	'options' => ['placeholder' => 'Select color ...','readonly' => true],
 	]); ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>
+<div class="box-footer">
+	<?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+</div>
+<?php ActiveForm::end(); ?>

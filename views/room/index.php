@@ -10,52 +10,55 @@ use yii\grid\GridView;
 $this->title = 'Rooms';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="room-index">
 
-    <h1>
-        <img height="50px" src="<?=\Yii::$app->request->BaseUrl?>/img/room.png"/>
-        <span style="vertical-align: middle;"><?= Html::encode($this->title) ?></span></h1>
+<section class="content-header">
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?= yii\widgets\Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+  ]) ?>
+</section>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<section class="content">
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <?= Html::a('Create Room', ['create'], ['class' => 'btn btn-success']) ?>
+        </div>
+        <div class="box-body">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
 
-    <p>
-        <?= Html::a('Create Room', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+                    [
+                        'attribute'=>'name',
+                        'contentOptions'=>['style'=>'width: 150px;']
+                    ],
+                    [
+                        'attribute'=>'lockid',
+                        'contentOptions'=>['style'=>'width: 120px;']
+                    ],
+                    'description',
+                    [
+                        'attribute'=>'varfloor',
+                        'value'=>'floor.name',
+                        'contentOptions'=>['style'=>'width: 130px;']
+                    ],
+                    [
+                        'attribute'=>'varroomtype',
+                        'value'=>'roomtype.name',
+                        'contentOptions'=>['style'=>'width: 180px;']
+                    ],
+                    [
+                        'attribute'=>'varroomstatus',
+                        'value'=>'colorHtml',
+                        'format'=>'html',
+                        'contentOptions'=>['style'=>'width: 120px;']
+                    ],
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            [
-                'attribute'=>'name',
-                'contentOptions'=>['style'=>'width: 150px;']
-            ],
-            [
-                'attribute'=>'lockid',
-                'contentOptions'=>['style'=>'width: 120px;']
-            ],
-            'description',
-            [
-                'attribute'=>'varfloor',
-                'value'=>'floor.name',
-                'contentOptions'=>['style'=>'width: 130px;']
-            ],
-            [
-                'attribute'=>'varroomtype',
-                'value'=>'roomtype.name',
-                'contentOptions'=>['style'=>'width: 180px;']
-            ],
-            [
-                'attribute'=>'varroomstatus',
-                'value'=>'colorHtml',
-                'format'=>'html',
-                'contentOptions'=>['style'=>'width: 120px;']
-            ],
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
-</div>
+                    ['class' => 'yii\grid\ActionColumn'],
+                ],
+            ]); ?>
+        </div>
+    </div>
+</section>

@@ -10,33 +10,37 @@ use yii\grid\GridView;
 $this->title = 'Identification Types';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="identification-type-index">
 
-    <h1>
-        <img height="50px" src="<?=\Yii::$app->request->BaseUrl?>/img/card.png"/>
-        <span style="vertical-align: middle;"><?= Html::encode($this->title) ?></span></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<section class="content-header">
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?= yii\widgets\Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+  ]) ?>
+</section>
 
-    <p>
-        <?= Html::a('Create Identification Type', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+<section class="content">
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <?= Html::a('Create Identification Type', ['create'], ['class' => 'btn btn-success']) ?>
+        </div>
+        <div class="box-body">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    [
+                        'class' => 'yii\grid\SerialColumn',
+                        'contentOptions'=>['style'=>'width: 70px;']
+                    ],
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            [
-                'class' => 'yii\grid\SerialColumn',
-                'contentOptions'=>['style'=>'width: 70px;']
-            ],
+                    'name',
 
-            'name',
-
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'contentOptions'=>['style'=>'width: 100px;']
-            ],
-        ],
-    ]); ?>
-
-</div>
+                    [
+                        'class' => 'yii\grid\ActionColumn',
+                        'contentOptions'=>['style'=>'width: 100px;']
+                    ],
+                ],
+            ]); ?>
+        </div>
+    </div>
+</section>

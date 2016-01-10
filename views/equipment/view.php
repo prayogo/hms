@@ -5,33 +5,41 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Equipment */
+\yii\web\jQueryAsset::register($this);
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Equipments', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="equipment-view">
 
-    <h1>
-        <img height="50px" src="<?=\Yii::$app->request->BaseUrl?>/img/equipment.png"/>
-        <span style="vertical-align: middle;">Equipments: <?= Html::encode($this->title) ?></span></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->equipmentid], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->equipmentid], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+<section class="content-header">
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?= yii\widgets\Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+  ]) ?>
+</section>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-        ],
-    ]) ?>
 
-</div>
+<section class="content">
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <?= Html::a('Update', ['update', 'id' => $model->equipmentid], ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('Delete', ['delete', 'id' => $model->equipmentid], [
+                'class' => 'btn btn-danger',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ],
+            ]) ?>
+        </div>
+        <div class="box-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'name',
+                ],
+            ]) ?>
+        </div>
+    </div>
+</section>

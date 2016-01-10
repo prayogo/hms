@@ -24,26 +24,12 @@ $this->params['breadcrumbs'][] = 'Update';
 
 <section class="content">
 
-    <div class="box box-default">
-        <div class="box-header with-border">
-            <h3 class="box-title"><i class="glyphicon glyphicon-home"></i> Hotel Information</h3>
-            <div class="box-tools pull-right">
-                <?= Html::a('Update', ['update'], ['class' => 'btn btn-primary']) ?>
-            </div>
-        </div>
-        <div class="box-body">
-            
-        </div>
-    </div>
-
-</section>
-
 <div class="hotel-index">
 
     
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php $form = ActiveForm::begin(['options'=>['class'=>'form-horizontal']]); ?>
-<?php echo $form->errorSummary([]);?> 
+<?php echo $form->errorSummary($model, ['class'=>'callout callout-danger' ]);?> 
     <div>
     <?php
         $data = [];
@@ -226,6 +212,7 @@ $this->params['breadcrumbs'][] = 'Update';
             'position'=>TabsX::POS_ABOVE,
             'encodeLabels'=>false,
             'bordered'=>true,
+            'containerOptions'=>['class'=>'nav-tabs-custom']
         ]);
     ?> 
     </div>
@@ -234,6 +221,10 @@ $this->params['breadcrumbs'][] = 'Update';
     </div>
 <?php ActiveForm::end(); ?>
 </div>
+
+</section>
+
+
 
 <style>
     h4{
