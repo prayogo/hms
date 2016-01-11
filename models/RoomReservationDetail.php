@@ -5,25 +5,26 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "ps_extraservice".
+ * This is the model class for table "ps_roomreservationdetail".
  *
- * @property integer $extraserviceid
+ * @property integer $reservationdetailid
  * @property integer $reservationid
  * @property integer $roomid
- * @property string $date
+ * @property integer $rate
+ * @property string $start_date
+ * @property string $end_date
  *
  * @property PsRoomreservation $reservation
  * @property PsRoom $room
- * @property PsExtraservicedetail[] $psExtraservicedetails
  */
-class ExtraService extends \yii\db\ActiveRecord
+class RoomReservationDetail extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'ps_extraservice';
+        return 'ps_roomreservationdetail';
     }
 
     /**
@@ -32,9 +33,9 @@ class ExtraService extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['reservationid', 'roomid'], 'required'],
-            [['reservationid', 'roomid'], 'integer'],
-            [['date'], 'safe']
+            [['reservationid', 'roomid', 'rate'], 'required'],
+            [['reservationid', 'roomid', 'rate'], 'integer'],
+            [['start_date', 'end_date'], 'safe']
         ];
     }
 
@@ -44,10 +45,12 @@ class ExtraService extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'extraserviceid' => 'Extraserviceid',
+            'reservationdetailid' => 'Reservationdetailid',
             'reservationid' => 'Reservationid',
             'roomid' => 'Roomid',
-            'date' => 'Date',
+            'rate' => 'Rate',
+            'start_date' => 'Start Date',
+            'end_date' => 'End Date',
         ];
     }
 
@@ -65,13 +68,5 @@ class ExtraService extends \yii\db\ActiveRecord
     public function getRoom()
     {
         return $this->hasOne(PsRoom::className(), ['roomid' => 'roomid']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPsExtraservicedetails()
-    {
-        return $this->hasMany(PsExtraservicedetail::className(), ['extraserviceid' => 'extraserviceid']);
     }
 }

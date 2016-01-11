@@ -8,12 +8,10 @@ use Yii;
  * This is the model class for table "ps_discount".
  *
  * @property integer $discountid
- * @property integer $roomtypeid
- * @property string $startdate
- * @property string $enddate
- * @property integer $discountrate
- *
- * @property PsRoomtype $roomtype
+ * @property double $percent
+ * @property integer $rate
+ * @property string $from_date
+ * @property string $to_date
  */
 class Discount extends \yii\db\ActiveRecord
 {
@@ -31,9 +29,9 @@ class Discount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['roomtypeid', 'startdate', 'enddate', 'discountrate'], 'required'],
-            [['roomtypeid', 'discountrate'], 'integer'],
-            [['startdate', 'enddate'], 'safe']
+            [['percent'], 'number'],
+            [['rate'], 'integer'],
+            [['from_date', 'to_date'], 'safe']
         ];
     }
 
@@ -43,19 +41,11 @@ class Discount extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'discountid' => 'ID',
-            'roomtypeid' => 'Room Type',
-            'startdate' => 'Start Date',
-            'enddate' => 'End Date',
-            'discountrate' => 'Rate',
+            'discountid' => 'Discountid',
+            'percent' => 'Percent',
+            'rate' => 'Rate',
+            'from_date' => 'From Date',
+            'to_date' => 'To Date',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRoomtype()
-    {
-        return $this->hasOne(RoomType::className(), ['roomtypeid' => 'roomtypeid']);
     }
 }

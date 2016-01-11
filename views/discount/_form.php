@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Discount */
@@ -13,27 +12,13 @@ use kartik\select2\Select2;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php    	
-    	$sql = "select roomtypeid, name from ps_roomtype";  
-        $data = [];
-        $data += yii\helpers\ArrayHelper::map(\app\models\RoomReservation::findBySql($sql)
-            ->asArray()
-            ->all(), 'roomtypeid', 'name');
+    <?= $form->field($model, 'percent')->textInput() ?>
 
-        echo $form->field($model, 'roomtypeid')->widget(Select2::classname(), [
-            'data' => $data,
-            'options' => ['placeholder' => 'Select a room type ...'],
-            'pluginOptions' => [
-            ],
-        ]);
+    <?= $form->field($model, 'rate')->textInput() ?>
 
-    ?>
+    <?= $form->field($model, 'from_date')->textInput() ?>
 
-    <?= $form->field($model, 'startdate')->textInput() ?>
-
-    <?= $form->field($model, 'enddate')->textInput() ?>
-
-    <?= $form->field($model, 'discountrate')->textInput() ?>
+    <?= $form->field($model, 'to_date')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

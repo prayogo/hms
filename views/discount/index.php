@@ -26,10 +26,10 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'discountid',
-            'roomtypeid',
-            'startdate',
-            'enddate',
-            'discountrate',
+            'percent',
+            'rate',
+            'from_date',
+            'to_date',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

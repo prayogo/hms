@@ -29,10 +29,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'discountid',
-            'roomtypeid',
-            'startdate',
-            'enddate',
-            'discountrate',
+            'percent',
+            'rate',
+            'from_date',
+            'to_date',
         ],
     ]) ?>
 

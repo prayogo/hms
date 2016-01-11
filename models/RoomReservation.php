@@ -7,22 +7,16 @@ use Yii;
 /**
  * This is the model class for table "ps_roomreservation".
  *
- * @property integer $roomreservationid
- * @property integer $roomid
+ * @property integer $reservationid
  * @property integer $customerid
- * @property string $startdate
- * @property string $enddate
- * @property integer $deposit
- * @property string $cancel
  * @property integer $roomstatusid
- * @property string $out
- * @property integer $child
- * @property integer $adult
+ * @property string $date
  *
+ * @property PsDiscountreservation[] $psDiscountreservations
  * @property PsExtraservice[] $psExtraservices
- * @property PsRoom $room
  * @property PsCustomer $customer
  * @property PsRoomstatus $roomstatus
+ * @property PsRoomreservationdetail[] $psRoomreservationdetails
  */
 class RoomReservation extends \yii\db\ActiveRecord
 {
@@ -40,10 +34,9 @@ class RoomReservation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['roomid', 'customerid', 'startdate', 'enddate', 'roomstatusid', 'child', 'adult'], 'required'],
-            [['roomid', 'customerid', 'deposit', 'roomstatusid', 'child', 'adult'], 'integer'],
-            [['startdate', 'enddate', 'out'], 'safe'],
-            [['cancel'], 'string', 'max' => 1],
+            [['customerid', 'roomstatusid'], 'required'],
+            [['customerid', 'roomstatusid'], 'integer'],
+            [['date'], 'safe']
         ];
     }
 
@@ -53,34 +46,27 @@ class RoomReservation extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'roomreservationid' => 'ID',
-            'roomid' => 'Room',
-            'customerid' => 'Customer',
-            'startdate' => 'Start Date',
-            'enddate' => 'End Date',            
-            'deposit' => 'Deposit',
-            'cancel' => 'Cancel',
-            'roomstatusid' => 'Status',
-            'out' => 'Checking Out',
-            'child' => 'Child',
-            'adult' => 'Adult',
+            'reservationid' => 'Reservationid',
+            'customerid' => 'Customerid',
+            'roomstatusid' => 'Roomstatusid',
+            'date' => 'Date',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getExtraservices()
+    public function getPsDiscountreservations()
     {
-        return $this->hasMany(ExtraService::className(), ['roomreservationid' => 'roomreservationid']);
+        return $this->hasMany(PsDiscountreservation::className(), ['reservationid' => 'reservationid']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRoom()
+    public function getPsExtraservices()
     {
-        return $this->hasOne(Room::className(), ['roomid' => 'roomid']);
+        return $this->hasMany(PsExtraservice::className(), ['reservationid' => 'reservationid']);
     }
 
     /**
@@ -88,7 +74,7 @@ class RoomReservation extends \yii\db\ActiveRecord
      */
     public function getCustomer()
     {
-        return $this->hasOne(Customer::className(), ['customerid' => 'customerid']);
+        return $this->hasOne(PsCustomer::className(), ['customerid' => 'customerid']);
     }
 
     /**
@@ -96,18 +82,14 @@ class RoomReservation extends \yii\db\ActiveRecord
      */
     public function getRoomstatus()
     {
-        return $this->hasOne(RoomStatus::className(), ['roomstatusid' => 'roomstatusid']);
-    }
-
-    public function getRoomStatusText(){
-       return '<span class="label" style="background-color:'.$this->roomstatus->color.'">'.$this->roomstatus->name.'</span>';
+        return $this->hasOne(PsRoomstatus::className(), ['roomstatusid' => 'roomstatusid']);
     }
 
     /**
-    * @return \yii\db\ActiveQuery
-    */
-    public function getRoomreservationrate()
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPsRoomreservationdetails()
     {
-        return $this->hasOne(RoomReservationRate::className(), ['roomreservationid' => 'roomreservationid']);
+        return $this->hasMany(PsRoomreservationdetail::className(), ['reservationid' => 'reservationid']);
     }
 }

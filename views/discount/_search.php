@@ -17,13 +17,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'discountid') ?>
 
-    <?= $form->field($model, 'roomtypeid') ?>
+    <?= $form->field($model, 'percent') ?>
 
-    <?= $form->field($model, 'startdate') ?>
+    <?= $form->field($model, 'rate') ?>
 
-    <?= $form->field($model, 'enddate') ?>
+    <?= $form->field($model, 'from_date') ?>
 
-    <?= $form->field($model, 'discountrate') ?>
+    <?= $form->field($model, 'to_date') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

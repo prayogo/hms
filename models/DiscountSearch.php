@@ -18,8 +18,9 @@ class DiscountSearch extends Discount
     public function rules()
     {
         return [
-            [['discountid', 'roomtypeid', 'discountrate'], 'integer'],
-            [['startdate', 'enddate'], 'safe'],
+            [['discountid', 'rate'], 'integer'],
+            [['percent'], 'number'],
+            [['from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -47,16 +48,20 @@ class DiscountSearch extends Discount
             'query' => $query,
         ]);
 
-        if (!($this->load($params) && $this->validate())) {
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
             return $dataProvider;
         }
 
         $query->andFilterWhere([
             'discountid' => $this->discountid,
-            'roomtypeid' => $this->roomtypeid,
-            'startdate' => $this->startdate,
-            'enddate' => $this->enddate,
-            'discountrate' => $this->discountrate,
+            'percent' => $this->percent,
+            'rate' => $this->rate,
+            'from_date' => $this->from_date,
+            'to_date' => $this->to_date,
         ]);
 
         return $dataProvider;
