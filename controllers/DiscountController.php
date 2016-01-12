@@ -62,8 +62,28 @@ class DiscountController extends Controller
     {
         $model = new Discount();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->discountid]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->from_date = date("Y-m-d", strtotime(str_replace("/","-",$model->from_date)));
+
+            $model->amount = intval(str_replace(".", "", $model->amount));
+
+            if ($model->discountby == 'P'){
+                $model->rate = null;
+                $model->percent = $model->amount;
+            }else if ($model->discountby == 'R'){
+                $model->rate = $model->amount;
+                $model->percent = null;
+            }else{
+                $model->addError('discountby', 'Discount by cannot be blank.');
+            }
+
+            if ($model->save()){
+                return $this->redirect(['view', 'id' => $model->discountid]);
+            }else{
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -80,9 +100,31 @@ class DiscountController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->amount = $model->percent ? $model->percent : $model->rate;
+        $model->discountby = $model->percent ? 'P' : 'R';
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->discountid]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->from_date = date("Y-m-d", strtotime(str_replace("/","-",$model->from_date)));
+
+            $model->amount = intval(str_replace(".", "", $model->amount));
+
+            if ($model->discountby == 'P'){
+                $model->rate = null;
+                $model->percent = $model->amount;
+            }else if ($model->discountby == 'R'){
+                $model->rate = $model->amount;
+                $model->percent = null;
+            }else{
+                $model->addError('discountby', 'Discount by cannot be blank.');
+            }
+
+            if ($model->save()){
+                return $this->redirect(['view', 'id' => $model->discountid]);
+            }else{
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         } else {
             return $this->render('update', [
                 'model' => $model,

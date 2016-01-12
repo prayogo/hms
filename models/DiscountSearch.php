@@ -15,11 +15,12 @@ class DiscountSearch extends Discount
     /**
      * @inheritdoc
      */
+
     public function rules()
     {
         return [
-            [['discountid', 'rate'], 'integer'],
-            [['percent'], 'number'],
+            [['discountid'], 'integer'],
+            [['name', 'rate'], 'string'],
             [['from_date', 'to_date'], 'safe'],
         ];
     }
@@ -56,13 +57,12 @@ class DiscountSearch extends Discount
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'discountid' => $this->discountid,
-            'percent' => $this->percent,
-            'rate' => $this->rate,
-            'from_date' => $this->from_date,
-            'to_date' => $this->to_date,
-        ]);
+        $query->andFilterWhere(['like', 'rate', $this->rate]);
+        $query->orFilterWhere(['like', 'concat(percent, \'%\')', $this->rate]);
+
+        $query->andFilterWhere([ 'like', 'name', $this->name ]);
+        $query->andFilterWhere([ 'like', 'date_format(from_date, \'%d-%b-%Y\')', $this->from_date ]);
+        $query->andFilterWhere([ 'like', 'coalesce(date_format(to_date, \'%d-%b-%Y\'), \'Now\')', $this->to_date ]);
 
         return $dataProvider;
     }

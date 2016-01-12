@@ -9,30 +9,53 @@ use yii\grid\GridView;
 
 $this->title = 'Discounts';
 $this->params['breadcrumbs'][] = $this->title;
+
+$tax = \app\models\Tax::find()->one();
+
 ?>
-<div class="discount-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<section class="content-header">
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?= yii\widgets\Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+  ]) ?>
+</section>
 
-    <p>
-        <?= Html::a('Create Discount', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+<section class="content">
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <?= Html::a('Create Discount', ['create'], ['class' => 'btn btn-success']) ?>
+        </div>
+        <div class="box-body">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+                    'name',
+                    [
+                        'attribute' => 'rate',
+                        'value'  =>  function($model) {
+                            return $model->getRateFormat();
+                        }
+                    ],
+                    [
+                        'attribute' => 'from_date',
+                        'value'  =>  function($model) {
+                            return $model->getFromDateFormat();
+                        }
+                    ],
+                    [
+                        'attribute' => 'to_date',
+                        'value'  =>  function($model) {
+                            return $model->getToDateFormat();
+                        }
+                    ],
 
-            'discountid',
-            'percent',
-            'rate',
-            'from_date',
-            'to_date',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
-</div>
+                    ['class' => 'yii\grid\ActionColumn'],
+                ],
+            ]); ?>
+        </div>
+    </div>
+</section>
