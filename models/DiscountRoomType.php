@@ -28,7 +28,6 @@ class DiscountRoomType extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['discountid', 'roomtypeid'], 'required'],
             [['discountid', 'roomtypeid'], 'integer']
         ];
     }
@@ -39,7 +38,7 @@ class DiscountRoomType extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'discountid' => 'Discountid',
+            'discountid' => 'Discounts',
             'roomtypeid' => 'Roomtypeid',
         ];
     }
@@ -49,6 +48,14 @@ class DiscountRoomType extends \yii\db\ActiveRecord
      */
     public function getRoomtype()
     {
-        return $this->hasOne(PsRoomtype::className(), ['roomtypeid' => 'roomtypeid']);
+        return $this->hasOne(RoomType::className(), ['roomtypeid' => 'roomtypeid']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDiscount()
+    {
+        return $this->hasOne(Discount::className(), ['discountid' => 'discountid']);
     }
 }

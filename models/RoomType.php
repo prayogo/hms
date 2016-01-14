@@ -37,6 +37,8 @@ class RoomType extends \yii\db\ActiveRecord
     public $varchildCharge;
     public $varadultCharge;
     public $varrate;
+    public $equipments;
+    public $discounts;
 
     /**
      * @inheritdoc
@@ -49,7 +51,8 @@ class RoomType extends \yii\db\ActiveRecord
             [['name'], 'string', 'max' => 50],
             ['name', 'unique'],
             [['description'], 'string', 'max' => 250],
-            [['varchildCharge','varadultCharge','varrate'], 'string', 'max' => 20]
+            [['varchildCharge','varadultCharge','varrate'], 'string', 'max' => 20],
+            [['equipments', 'discounts'], 'safe']
         ];
     }
 
@@ -77,7 +80,7 @@ class RoomType extends \yii\db\ActiveRecord
             'ChildChargeFormat'=>'Child Charge',
             'AdultChargeFormat'=>'Adult Charge',
             'RateChargeFormat'=>'Rate',
-            'WeekEndChargeFormat'=>'Weekend Rate',
+            'WeekEndChargeFormat'=>'Weekend Rate'
         ];
     }
 
@@ -95,6 +98,14 @@ class RoomType extends \yii\db\ActiveRecord
     public function getRoomTypeEquipments()
     {
         return $this->hasMany(RoomTypeEquipment::className(), ['roomtypeid' => 'roomtypeid']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRoomTypeDiscounts()
+    {
+        return $this->hasMany(DiscountRoomType::className(), ['roomtypeid' => 'roomtypeid']);
     }
     
     /**
@@ -132,6 +143,19 @@ class RoomType extends \yii\db\ActiveRecord
             array_push($equipments, $equipment->equipment->name);
         }
         return implode(', ', $equipments);
+    }
+
+    public function getDiscountHtml(){
+        $discounts = DiscountRoomType::find()->where('roomtypeid = :1',[':1'=>$this->roomtypeid,])->all();
+        $html = '<table>';
+        foreach($discounts as $discount){
+            $html .= '<tr><td><span>' . $discount->discount->name . '<span> <small class="discount-lbl label label-default">' . 
+                date('d-M-Y', strtotime($discount->discount->from_date)) . ' - ' .
+                (isset($discount->discount->to_date) ? date('d-M-Y', strtotime($discount->discount->to_date)) : 'Now') . 
+                '</small>' . '</td></tr>';
+        }
+        $html .= '</table>';
+        return $html;
     }
 
 

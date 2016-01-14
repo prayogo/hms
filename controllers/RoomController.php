@@ -79,7 +79,32 @@ class RoomController extends Controller
     {
         $model = new Room();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $connection = \Yii::$app->db;
+            $transaction = $connection->beginTransaction(); 
+
+            try {
+                 if (!$model->save()){
+                    $transaction->rollback();
+                    return $this->render('create', [
+                        'model' => $model,
+                    ]);  
+                }
+
+                foreach($model->discounts as $discountid){
+                    $roomDiscount = new \app\models\DiscountRoom();
+                    $roomDiscount->roomid = $model->roomid;
+                    $roomDiscount->discountid = $discountid;
+                    $roomDiscount->save();                          
+                }
+
+                $transaction->commit();
+                
+            } catch(Exception $e) {
+                $model->addError('name', $e);
+                $transaction->rollback();
+            }
+
             return $this->redirect(['view', 'id' => $model->roomid]);
         } else {
             return $this->render('create', [
@@ -97,8 +122,55 @@ class RoomController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->discounts = \yii\helpers\ArrayHelper::map(\app\models\DiscountRoom::find()
+            ->where('roomid = :1',[':1'=>$model->roomid])->asArray()->all(), 'discountid', 'discountid');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+
+            $connection = \Yii::$app->db;
+            $transaction = $connection->beginTransaction(); 
+
+            try {
+                 if (!$model->save()){
+                    $transaction->rollback();
+                    return $this->render('create', [
+                        'model' => $model,
+                    ]);  
+                }
+
+                \app\models\DiscountRoom::deleteAll(
+                    'roomid = :1 and discountid not in (:2)',
+                    [
+                        ':1'=>$model->roomid,
+                        ':2'=>implode("','",$model->discounts)
+                    ]
+                );
+
+                foreach($model->discounts as $discountid){
+                    $exist = \app\models\DiscountRoom::find()->where(
+                        'roomid = :1 and discountid = (:2)',
+                        [
+                            ':1'=>$model->roomid,
+                            ':2'=>$discountid
+                        ]
+                    )->one();
+
+                    if ($exist == null){
+                        $roomDiscount = new \app\models\DiscountRoom();
+                        $roomDiscount->roomid = $model->roomid;
+                        $roomDiscount->discountid = $discountid;
+                        $roomDiscount->save();   
+                    }
+                }
+
+                $transaction->commit();
+                
+            } catch(Exception $e) {
+                $model->addError('name', $e);
+                $transaction->rollback();
+            }
+
+
             return $this->redirect(['view', 'id' => $model->roomid]);
         } else {
             return $this->render('update', [
@@ -115,7 +187,14 @@ class RoomController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $connection = \Yii::$app->db;
+        $transaction = $connection->beginTransaction(); 
+
+        $model = $this->findModel($id);
+        \app\models\DiscountRoom::deleteAll('roomid = :1', [':1'=>$model->roomid]);
+        $model->delete();
+
+        $transaction->commit();
 
         return $this->redirect(['index']);
     }

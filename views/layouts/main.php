@@ -213,10 +213,10 @@ AppAsset::register($this);
                 <li><a href="<?= Url::toRoute('room-status/index') ?>">Status Kamar</a></li>
                 <li><a href="<?= Url::toRoute('service-item/index') ?>">Produk Jual</a></li>
                 <li class="divider"></li>
+                <li><a href="<?= Url::toRoute('discount/index') ?>">Discount</a></li>
+                <li class="divider"></li>
                 <li><a href="<?= Url::toRoute('room-type/index') ?>">Tipe Kamar</a></li>
                 <li><a href="<?= Url::toRoute('room/index') ?>">Kamar</a></li>
-                <li class="divider"></li>
-                <li><a href="<?= Url::toRoute('discount/index') ?>">Discount</a></li>
                 <li class="divider"></li>
                 <li><a href="<?= Url::toRoute('user/index') ?>">User Aplikasi</a></li>
               </ul>

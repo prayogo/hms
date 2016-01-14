@@ -55,9 +55,28 @@ use kartik\select2\Select2;
             ],
         ]);
     ?>
+
+    <?php
+        $data = [];
+        $data += yii\helpers\ArrayHelper::map(\app\models\Discount::find()->asArray()->all(), 'discountid', 'name');
+
+        echo $form->field($model, 'discounts', ['template'=>'{label}<div class="panel panel-body panel-default box-body">{input}</div>'])
+            ->checkboxlist($data, [
+                'style'=>'height:150px; overflow-y:scroll;','class'=>'row', 'tag'=>'div',
+                'itemOptions'=>['labelOptions'=>['class'=>'col-md-6']]
+            ]);
+    ?>
 </div>
 <div class="box-footer">
     <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
 </div>
 
 <?php ActiveForm::end(); ?>
+<style>
+    .control-label{
+        width:120px;
+    }
+    .box-body{
+        padding: 15px;
+    }
+</style>

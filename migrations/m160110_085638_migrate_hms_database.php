@@ -138,25 +138,22 @@ class m160110_085638_migrate_hms_database extends Migration
         ], $tableOptions);
 
         $this->createTable('{{%ps_discountroomtype}}', [
-            'discountroomtypeid' => INT_PRIMARY,
             'discountid' => 'INT NOT NULL',
             'roomtypeid' => 'INT NOT NULL',
-            'active' => 'CHAR(1) NOT NULL DEFAULT \'Y\' ',
         ], $tableOptions);
+        $this->addPrimaryKey('ps_discountroomtype_pk', 'ps_discountroomtype', ['discountid', 'roomtypeid']);
 
         $this->createTable('{{%ps_discountroom}}', [
-            'discountroomid' => INT_PRIMARY,
             'discountid' => 'INT NOT NULL',
             'roomid' => 'INT NOT NULL',
-            'active' => 'CHAR(1) NOT NULL DEFAULT \'Y\' ',
         ], $tableOptions);
+        $this->addPrimaryKey('ps_discountroom_pk', 'ps_discountroom', ['discountid', 'roomid']);
 
         $this->createTable('{{%ps_discountcustomer}}', [
-            'discountcustomerid' => INT_PRIMARY,
             'discountid' => 'INT NOT NULL',
             'customerid' => 'INT NOT NULL',
-            'active' => 'CHAR(1) NOT NULL DEFAULT \'Y\' ',
         ], $tableOptions);
+        $this->addPrimaryKey('ps_discountcustomer_pk', 'ps_discountroom', ['discountid', 'customerid']);
 
         $this->createTable('{{%ps_roomreservation}}', [
             'reservationid' => INT_PRIMARY,

@@ -46,9 +46,25 @@ $this->params['breadcrumbs'][] = $this->title;
                     'description',
                     'RateChargeFormat',
                     'WeekEndChargeFormat',
-                    'EquipmentText'
+                    [
+                        'attribute' => 'equipments',
+                        'value'  => $model->getequipmentText()
+                    ],
+                    [
+                        'attribute' => 'discounts',
+                        'value'  => $model->getdiscountHtml(),
+                        'type'=>'raw',
+                        'format' => 'html'
+                    ]
                 ],
             ]) ?>
         </div>
     </div>
 </section>
+
+<style type="text/css">
+    .discount-lbl{
+        margin-left: 10px;
+        font-size: 11px;
+    }
+</style>

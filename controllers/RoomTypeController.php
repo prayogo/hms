@@ -116,13 +116,18 @@ class RoomTypeController extends Controller
                     ]);  
                 }
                
-                if (isset($_POST["RoomTypeEquipment"]["equipmentid"])){
-                    foreach($_POST["RoomTypeEquipment"]["equipmentid"] as $equipmentid){
-                        $roomEquipment = new \app\models\RoomTypeEquipment();
-                        $roomEquipment->roomtypeid = $model->roomtypeid;
-                        $roomEquipment->equipmentid = $equipmentid;
-                        $roomEquipment->save();                           
-                    }
+                foreach($model->equipments as $equipmentid){
+                    $roomEquipment = new \app\models\RoomTypeEquipment();
+                    $roomEquipment->roomtypeid = $model->roomtypeid;
+                    $roomEquipment->equipmentid = $equipmentid;
+                    $roomEquipment->save();                           
+                }
+
+                foreach($model->discounts as $discountid){
+                    $roomDiscount = new \app\models\DiscountRoomType();
+                    $roomDiscount->roomtypeid = $model->roomtypeid;
+                    $roomDiscount->discountid = $discountid;
+                    $roomDiscount->save();                          
                 }
 
                 $transaction->commit();
@@ -148,12 +153,17 @@ class RoomTypeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->equipments = \yii\helpers\ArrayHelper::map(\app\models\RoomTypeEquipment::find()
+            ->where('roomtypeid = :1',[':1'=>$model->roomtypeid])->asArray()->all(), 'equipmentid', 'equipmentid');
+        $model->discounts = \yii\helpers\ArrayHelper::map(\app\models\DiscountRoomType::find()
+            ->where('roomtypeid = :1',[':1'=>$model->roomtypeid])->asArray()->all(), 'discountid', 'discountid');
 
         $model->varchildCharge = $model->childcharge;
         $model->varadultCharge = $model->adultcharge;
         $model->varrate = $model->rate;
 
         if ($model->load(Yii::$app->request->post())) {
+
             $model->childcharge = str_replace('.','',$model->varchildCharge);
             $model->adultcharge = str_replace('.','',$model->varadultCharge);
             $model->rate = str_replace('.','',$model->varrate);
@@ -180,30 +190,53 @@ class RoomTypeController extends Controller
                     ]);  
                 }
 
-                if (isset($_POST["RoomTypeEquipment"]["equipmentid"])){
-                    \app\models\RoomTypeEquipment::deleteAll(
-                        'roomtypeid = :1 and equipmentid not in (:2)',
+                \app\models\RoomTypeEquipment::deleteAll(
+                    'roomtypeid = :1 and equipmentid not in (:2)',
+                    [
+                        ':1'=>$model->roomtypeid,
+                        ':2'=>implode("','",$model->equipments)
+                    ]
+                );
+
+                foreach($model->equipments as $equipmentid){
+                    $existEquipment = \app\models\RoomTypeEquipment::find()->where(
+                        'roomtypeid = :1 and equipmentid = (:2)',
                         [
                             ':1'=>$model->roomtypeid,
-                            ':2'=>implode("','",$_POST["RoomTypeEquipment"]["equipmentid"])
+                            ':2'=>$equipmentid
                         ]
-                    );
+                    )->one();
 
-                    foreach($_POST["RoomTypeEquipment"]["equipmentid"] as $equipmentid){
-                        $existEquipment = \app\models\RoomTypeEquipment::find()->where(
-                            'roomtypeid = :1 and equipmentid = (:2)',
-                            [
-                                ':1'=>$model->roomtypeid,
-                                ':2'=>$equipmentid
-                            ]
-                        )->one();
+                    if ($existEquipment == null){
+                        $roomEquipment = new \app\models\RoomTypeEquipment();
+                        $roomEquipment->roomtypeid = $model->roomtypeid;
+                        $roomEquipment->equipmentid = $equipmentid;
+                        $roomEquipment->save();   
+                    }
+                }
 
-                        if ($existEquipment == null){
-                            $roomEquipment = new \app\models\RoomTypeEquipment();
-                            $roomEquipment->roomtypeid = $model->roomtypeid;
-                            $roomEquipment->equipmentid = $equipmentid;
-                            $roomEquipment->save();   
-                        }
+                \app\models\DiscountRoomType::deleteAll(
+                    'roomtypeid = :1 and discountid not in (:2)',
+                    [
+                        ':1'=>$model->roomtypeid,
+                        ':2'=>implode("','",$model->discounts)
+                    ]
+                );
+
+                foreach($model->discounts as $discountid){
+                    $exist = \app\models\DiscountRoomType::find()->where(
+                        'roomtypeid = :1 and discountid = (:2)',
+                        [
+                            ':1'=>$model->roomtypeid,
+                            ':2'=>$discountid
+                        ]
+                    )->one();
+
+                    if ($exist == null){
+                        $roomDiscount = new \app\models\DiscountRoomType();
+                        $roomDiscount->roomtypeid = $model->roomtypeid;
+                        $roomDiscount->discountid = $discountid;
+                        $roomDiscount->save();   
                     }
                 }
 
@@ -228,7 +261,15 @@ class RoomTypeController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $connection = \Yii::$app->db;
+        $transaction = $connection->beginTransaction(); 
+
+        $model = $this->findModel($id);
+        \app\models\DiscountRoomType::deleteAll('roomtypeid = :1', [':1'=>$model->roomtypeid]);
+        \app\models\RoomTypeEquipment::deleteAll('roomtypeid = :1', [':1'=>$model->roomtypeid]);
+        $model->delete();
+
+        $transaction->commit();
 
         return $this->redirect(['index']);
     }

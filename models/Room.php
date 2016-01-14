@@ -34,6 +34,7 @@ class Room extends \yii\db\ActiveRecord
     public $varfloor;
     public $varroomtype;
     public $varroomstatus;
+    public $discounts;
 
     /**
      * @inheritdoc
@@ -44,7 +45,8 @@ class Room extends \yii\db\ActiveRecord
             [['name', 'floorid', 'roomtypeid', 'roomstatusid'], 'required'],
             [['floorid', 'roomtypeid', 'roomstatusid'], 'integer'],
             [['name', 'lockid'], 'string', 'max' => 50],
-            [['description'], 'string', 'max' => 250]
+            [['description'], 'string', 'max' => 250],
+            ['discounts', 'safe']
         ];
     }
 
@@ -107,11 +109,32 @@ class Room extends \yii\db\ActiveRecord
         return $this->hasMany(SeasonalRateDetail::className(), ['roomid' => 'roomid']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRoomDiscount()
+    {
+        return $this->hasMany(DiscountRoom::className(), ['roomid' => 'roomid']);
+    }
+
     public function getroomstatusColor(){
         return '<span class="label" style="background-color: '.$this->roomstatus->color.';">'.$this->roomstatus->name.'</span>';
     }
 
     public function getcolorHtml(){
         return '<span class="label" style="background-color: '.$this->roomstatus->color.';">'.$this->roomstatus->name.'</span>';
+    }
+
+    public function getDiscountHtml(){
+        $discounts = DiscountRoom::find()->where('roomid = :1',[':1'=>$this->roomid,])->all();
+        $html = '<table>';
+        foreach($discounts as $discount){
+            $html .= '<tr><td><span>' . $discount->discount->name . '<span> <small class="discount-lbl label label-default">' . 
+                date('d-M-Y', strtotime($discount->discount->from_date)) . ' - ' .
+                (isset($discount->discount->to_date) ? date('d-M-Y', strtotime($discount->discount->to_date)) : 'Now') . 
+                '</small>' . '</td></tr>';
+        }
+        $html .= '</table>';
+        return $html;
     }
 }

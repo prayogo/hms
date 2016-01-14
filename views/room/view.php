@@ -51,6 +51,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'html',
                         'value'=>$model->roomstatusColor
                     ],
+                    [
+                        'attribute' => 'discounts',
+                        'value'  => $model->getdiscountHtml(),
+                        'type'=>'raw',
+                        'format' => 'html'
+                    ]
                 ],
             ]) ?>
         </div>

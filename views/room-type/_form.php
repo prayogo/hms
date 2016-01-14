@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\slider\Slider;
 use app\models\Equipment;
+use app\models\Discount;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\RoomType */
@@ -106,23 +107,28 @@ $tax = \app\models\Tax::find()->one();
     <?= $form->field($model, 'description')->textArea(['maxlength' => 250, 'style'=>'height:120px']) ?>
 
     <?php 
-        $equipment = new \app\models\RoomTypeEquipment();
-        $checkedEquipment = [];
-        if (!$model->isNewRecord){
-            $existequip = $equipment->find()->where(
-                'roomtypeid = :1',[':1'=>$model->roomtypeid,])->asArray()->all();
-            foreach($existequip as $equip){
-                array_push($checkedEquipment, $equip["equipmentid"]);
-            }
-        }
-        
         $data = [];
         $data += yii\helpers\ArrayHelper::map(Equipment::find()->asArray()->all(), 'equipmentid', 'name');
-        $equipment->equipmentid = $checkedEquipment;
-        echo $form->field($equipment, 'equipmentid')->checkboxlist($data, [
-            'separator'=>'<br>','style'=>'height:150px; overflow-y:scroll','class'=>'panel panel-body panel-default'
+
+        echo $form->field($model, 'equipments', ['template'=>'{label}<div class="box-body panel panel-body panel-default">{input}</div>'])
+        ->checkboxlist($data, [
+            'style'=>'height:150px; overflow-y:scroll','class'=>'row',
+            'itemOptions'=>['labelOptions'=>['class'=>'col-md-4']]
         ]);
     ?>
+
+    <?php
+        $data = [];
+        $data += yii\helpers\ArrayHelper::map(Discount::find()->asArray()->all(), 'discountid', 'name');
+
+        echo $form->field($model, 'discounts', ['template'=>'{label}<div class="panel panel-body panel-default box-body">{input}</div>'])
+            ->checkboxlist($data, [
+                'style'=>'height:150px; overflow-y:scroll;','class'=>'row', 'tag'=>'div',
+                'itemOptions'=>['labelOptions'=>['class'=>'col-md-6']]
+            ]);
+    ?>
+
+
 </div>
 <div class="box-footer">
     <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
@@ -132,5 +138,8 @@ $tax = \app\models\Tax::find()->one();
 <style>
     .control-label{
         width:120px;
+    }
+    .box-body{
+        padding: 15px;
     }
 </style>

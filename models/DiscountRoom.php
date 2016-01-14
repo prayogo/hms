@@ -49,6 +49,14 @@ class DiscountRoom extends \yii\db\ActiveRecord
      */
     public function getRoom()
     {
-        return $this->hasOne(PsRoom::className(), ['roomid' => 'roomid']);
+        return $this->hasOne(Room::className(), ['roomid' => 'roomid']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDiscount()
+    {
+        return $this->hasOne(Discount::className(), ['discountid' => 'discountid']);
     }
 }
