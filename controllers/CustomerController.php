@@ -83,6 +83,7 @@ class CustomerController extends Controller
         $index1 = 1;
         $customerPhone = null;
         $customerIdentification = null;
+        $model->locationid = "IDN";
 
         if ($model->load(Yii::$app->request->post())) {
             $model->birthdate = date("Y-m-d", strtotime($model->birthdate));
@@ -187,6 +188,7 @@ class CustomerController extends Controller
         $index1 = 1;
         $customerPhone = null;
         $customerIdentification = null;
+        $model->locationid = "IDN";
 
         if ($model->load(Yii::$app->request->post())) {
             $model->birthdate = date("Y-m-d", strtotime($model->birthdate));

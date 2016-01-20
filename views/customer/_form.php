@@ -12,9 +12,10 @@ use kartik\date\DatePicker;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="customer-form">
 
     <?php $form = ActiveForm::begin(); ?>
+
+<div class="box-body">
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => 50]) ?>
 
@@ -29,13 +30,7 @@ use kartik\date\DatePicker;
     $data = [];
     $data += yii\helpers\ArrayHelper::map(\app\models\Location::find()->asArray()->orderBy('name')->all(), 'locationid', 'name');
 
-    echo $form->field($model, 'locationid')->widget(Select2::classname(), [
-        'data' =>$data,
-        'options' => ['placeholder' => 'Select a location ...'],
-        'pluginOptions' => [
-            'allowClear' => true
-        ],
-    ]);
+    echo $form->field($model, 'locationid')->dropDownList($data);
 
     ?>
 
@@ -97,13 +92,14 @@ use kartik\date\DatePicker;
 
     <?= $form->field($model, 'blacklist')->radioList(['Y' => 'Yes', 'N' => 'No'],['separator'=>'<span style="margin-right:20px"></span>']) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+</div>
+
+<div class="box-footer">
+    <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+</div>
 
     <?php ActiveForm::end(); ?>
 
-</div>
 <?php
 
 $this->registerJs('

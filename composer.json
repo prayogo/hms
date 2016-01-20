@@ -29,7 +29,8 @@
         "kartik-v/yii2-date-range": "dev-master",
         "kartik-v/yii2-money": "*",
         "kartik-v/yii2-widget-timepicker": "*",
-        "bower-asset/jquery-mask-plugin": ">=1.7.7"
+        "bower-asset/jquery-mask-plugin": ">=1.7.7",
+        "bower-asset/select2": ">=4.0.1"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

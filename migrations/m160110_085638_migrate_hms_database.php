@@ -137,6 +137,31 @@ class m160110_085638_migrate_hms_database extends Migration
             'to_date' => 'DATE',
         ], $tableOptions);
 
+        $this->createTable('{{%ps_customer}}', [
+            'customerid' => INT_PRIMARY,
+            'name' => 'VARCHAR(50)',
+            'address' => 'VARCHAR(150)',
+            'email' => 'VARCHAR(150)',
+            'npwp' => 'VARCHAR(25)',
+            'locationid' => 'VARCHAR(3) NOT NULL',
+            'birthdate' => 'DATE',
+            'comment' => 'VARCHAR(250)',
+            'blacklist' => 'CHAR(1)',
+        ], $tableOptions);
+
+        $this->createTable('{{%ps_customeridentification}}', [
+            'customerid' => 'INT NOT NULL',
+            'identificationtypeid' => 'INT NOT NULL',
+            'identificationno' => 'VARCHAR(50) NOT NULL',
+        ], $tableOptions);
+        $this->addPrimaryKey('ps_customeridentification_pk', 'ps_customeridentification', ['customerid', 'identificationtypeid', 'identificationno']);
+
+        $this->createTable('{{%ps_customerphone}}', [
+            'customerid' => 'INT NOT NULL',
+            'phone' => 'VARCHAR(15) NOT NULL',
+        ], $tableOptions);
+        $this->addPrimaryKey('ps_customerphone_pk', 'ps_customerphone', ['customerid', 'phone']);
+
         $this->createTable('{{%ps_discountroomtype}}', [
             'discountid' => 'INT NOT NULL',
             'roomtypeid' => 'INT NOT NULL',
@@ -225,6 +250,14 @@ class m160110_085638_migrate_hms_database extends Migration
 
         $this->addForeignKey('ps_discountreservation_ibfk_1', 'ps_discountreservation', 'discountid', 'ps_discount', 'discountid');
         $this->addForeignKey('ps_discountreservation_ibfk_2', 'ps_discountreservation', 'reservationid', 'ps_roomreservation', 'reservationid');
+
+        $this->addForeignKey('ps_customer_ibfk_1', 'ps_customer', 'locationid', 'ps_location', 'locationid');
+
+        $this->addForeignKey('ps_customeridentification_ibfk_1', 'ps_customeridentification', 'customerid', 'ps_customer', 'customerid');
+        $this->addForeignKey('ps_customeridentification_ibfk_2', 'ps_customeridentification', 'identificationtypeid', 'ps_identificationtype', 'identificationtypeid');
+
+        $this->addForeignKey('ps_customerphone_ibfk_1', 'ps_customerphone', 'customerid', 'ps_customer', 'customerid');
+
     }
 
     public function down()
@@ -252,6 +285,10 @@ class m160110_085638_migrate_hms_database extends Migration
         $this->dropForeignKey('ps_extraservicedetail_ibfk_2', 'ps_extraservicedetail');
         $this->dropForeignKey('ps_discountreservation_ibfk_1', 'ps_discountreservation');
         $this->dropForeignKey('ps_discountreservation_ibfk_2', 'ps_discountreservation');
+        $this->dropForeignKey('ps_customer_ibfk_1', 'ps_customer');
+        $this->dropForeignKey('ps_customeridentification_ibfk_1', 'ps_customeridentification');
+        $this->dropForeignKey('ps_customeridentification_ibfk_2', 'ps_customeridentification');
+        $this->dropForeignKey('ps_customerphone_ibfk_1', 'ps_customerphone');
 
         //DROP TABLE
         $this->dropTable('{{%ps_hotel}}');
@@ -272,6 +309,9 @@ class m160110_085638_migrate_hms_database extends Migration
         $this->dropTable('{{%ps_discountroomtype}}');
         $this->dropTable('{{%ps_discountroom}}');
         $this->dropTable('{{%ps_discountcustomer}}');
+        $this->dropTable('{{%ps_customer}}');
+        $this->dropTable('{{%ps_customeridentification}}');
+        $this->dropTable('{{%ps_customerphone}}');
 
     }
 

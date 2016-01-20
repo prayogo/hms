@@ -10,18 +10,23 @@ $this->title = 'Create';
 $this->params['breadcrumbs'][] = ['label' => 'Customers', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="customer-create">
 
-    <h1>
-        <img height="50px" src="<?=\Yii::$app->request->BaseUrl?>/img/customer.png"/>
-        <span style="vertical-align: middle;">Customers: <?= Html::encode($this->title) ?></span></h1>
+<section class="content-header">
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?= yii\widgets\Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+  ]) ?>
+</section>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-        'index' => $index,
-        'index1' => $index1,
-        'customerPhone' => $customerPhone,
-        'customerIdentification' => $customerIdentification,
-    ]) ?>
 
-</div>
+<section class="content">
+    <div class="box box-default">
+        <?= $this->render('_form', [
+            'model' => $model,
+            'index' => $index,
+            'index1' => $index1,
+            'customerPhone' => $customerPhone,
+            'customerIdentification' => $customerIdentification,
+        ]) ?>
+    </div>
+</section>

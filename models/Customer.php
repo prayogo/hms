@@ -39,10 +39,11 @@ class Customer extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+
     public function rules()
     {
         return [
-            [['name', 'address', 'locationid', 'birthdate'], 'required'],
+            [['name', 'locationid'], 'required'],
             [['birthdate'], 'safe'],
             [['name'], 'string', 'max' => 50],
             [['address', 'email'], 'string', 'max' => 150],
