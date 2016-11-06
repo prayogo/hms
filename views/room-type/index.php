@@ -11,12 +11,6 @@ $this->title = 'Room Types';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-        
-
-    
-
-
-
 <section class="content-header">
   <h1><?= Html::encode($this->title) ?></h1>
   <?= yii\widgets\Breadcrumbs::widget([
@@ -36,13 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     [
                         'class' => 'yii\grid\SerialColumn',
-                        'contentOptions'=>['style'=>'width: 70px;']
+                        'contentOptions'=>['style'=>'width: 50px;']
                     ],
 
                     [
                         'attribute'=>'name',
                         'contentOptions'=>['style'=>'width: 250px;']
                     ],
+                    'code',
                     'singleb',
                     'doubleb',
                     'extrab',
@@ -59,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'contentOptions'=>['style'=>'width: 100px;']
+                        'contentOptions'=>['style'=>'width: 80px;']
                     ],
                 ],
             ]); ?>

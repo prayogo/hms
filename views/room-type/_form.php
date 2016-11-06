@@ -19,6 +19,7 @@ $tax = \app\models\Tax::find()->one();
 
 <div class="box-body">
     <?= $form->field($model, 'name')->textInput(['maxlength' => 50]) ?>
+    <?= $form->field($model, 'code')->textInput(['maxlength' => 8]) ?>
 
     <?= $form->field($model, 'singleb')->widget(Slider::classname(), [
         'sliderColor'   =>Slider::TYPE_SUCCESS,

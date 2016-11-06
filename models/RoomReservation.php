@@ -34,8 +34,8 @@ class RoomReservation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customerid', 'roomstatusid'], 'required'],
-            [['customerid', 'roomstatusid'], 'integer'],
+            [['customerid'], 'required'],
+            [['customerid'], 'integer'],
             [['date'], 'safe']
         ];
     }
@@ -47,8 +47,7 @@ class RoomReservation extends \yii\db\ActiveRecord
     {
         return [
             'reservationid' => 'Reservationid',
-            'customerid' => 'Customerid',
-            'roomstatusid' => 'Roomstatusid',
+            'customerid' => 'Customer',
             'date' => 'Date',
         ];
     }
@@ -74,15 +73,7 @@ class RoomReservation extends \yii\db\ActiveRecord
      */
     public function getCustomer()
     {
-        return $this->hasOne(PsCustomer::className(), ['customerid' => 'customerid']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRoomstatus()
-    {
-        return $this->hasOne(PsRoomstatus::className(), ['roomstatusid' => 'roomstatusid']);
+        return $this->hasOne(Customer::className(), ['customerid' => 'customerid']);
     }
 
     /**
@@ -91,5 +82,10 @@ class RoomReservation extends \yii\db\ActiveRecord
     public function getPsRoomreservationdetails()
     {
         return $this->hasMany(PsRoomreservationdetail::className(), ['reservationid' => 'reservationid']);
+    }
+
+    public function getReservationdeposits()
+    {
+        return $this->hasMany(ReservationDeposit::className(), ['reservationid' => 'reservationid']);
     }
 }

@@ -30,7 +30,7 @@ class CustomerIdentification extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customerid', 'identificationtypeid', 'identificationno'], 'required'],
+            [['customerid', 'identificationtypeid'], 'required'],
             [['customerid', 'identificationtypeid'], 'integer'],
             [['identificationno'], 'string', 'max' => 25]
         ];

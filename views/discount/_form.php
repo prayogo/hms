@@ -36,7 +36,8 @@ $tax = \app\models\Tax::find()->one();
 		echo $form->field($model, 'from_date')->widget(DatePicker::classname(), [
 		    'options' => ['placeholder' => 'Enter start date..'],
 		    'pluginOptions' => [
-		        'autoclose'=>true
+		        'autoclose'=>true,
+		        'format'=>'d-M-yyyy'
 		    ]
 		]);
 	?>
@@ -45,7 +46,8 @@ $tax = \app\models\Tax::find()->one();
 		echo $form->field($model, 'to_date')->widget(DatePicker::classname(), [
 		    'options' => ['placeholder' => 'Enter end date..'],
 		    'pluginOptions' => [
-		        'autoclose'=>true
+		        'autoclose'=>true,
+		        'format'=>'d-M-yyyy'
 		    ]
 		]);
 	?>

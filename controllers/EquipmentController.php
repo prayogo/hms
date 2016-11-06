@@ -25,7 +25,7 @@ class EquipmentController extends Controller
                         //'actions' => ['login', 'error'], // Define specific actions
                         'allow' => true, // Has access
                         'matchCallback' => function ($rule, $action) {
-                            return Yii::$app->user->identity->admin === "Y";
+                            return isset(Yii::$app->user->identity) && Yii::$app->user->identity->admin === "Y";
                         }
                     ],
                     [

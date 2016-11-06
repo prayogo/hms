@@ -221,5 +221,253 @@ class PaymentController extends Controller
     public function actionPrintPayment($paymentid){
         return $this->renderPartial('payment', ['paymentid' => $paymentid]);
     }
+
+    public function actionGetPaymentList(){
+        if(isset($_POST) && sizeof($_POST) > 0){
+            $customer = isset($_POST['customer']) ? $_POST['customer'] : null;
+            if ($customer == null){
+                echo(json_encode(null));
+                return;
+            }
+        }
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $query = new \yii\db\Query;
+        $command = $query->createCommand();
+        $command->setSql("select a.reservationid, a.customerid, c.name as customer, a.date as reservedate, 
+                    b.reservationdetailid, b.roomid, d.name as room, d.roomtypeid, e.code as roomtype, 
+                    b.rate, b.start_date, b.end_date 
+                from ps_roomreservation a
+                join ps_roomreservationdetail b on a.reservationid = b.reservationid
+                join ps_customer c on a.customerid = c.customerid
+                join ps_room d on b.roomid = d.roomid
+                join ps_roomtype e on d.roomtypeid = e.roomtypeid
+                where a.customerid = :1 and b.cancel = 0 and b.reservationdetailid not in (
+                    select reservationdetailid from ps_reservationpayment
+                )
+                order by b.start_date, d.name, a.date
+            ");
+        
+        $command->bindValue(':1', $customer);
+        $rows = $command->queryAll();
+        echo(json_encode($rows));
+    }
+
+    public function actionGetDepositList(){
+        if(isset($_POST) && sizeof($_POST) > 0){
+            $customer = isset($_POST['customer']) ? $_POST['customer'] : null;
+            if ($customer == null){
+                echo(json_encode(null));
+                return;
+            }
+        }
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $query = new \yii\db\Query;
+        $command = $query->createCommand();
+        $command->setSql("select distinct a.reservationid, d.depositid, a.customerid, c.name as customer, d.rate, d.date
+                from ps_roomreservation a
+                join ps_customer c on a.customerid = c.customerid
+                join ps_reservationdeposit d on a.reservationid = d.reservationid
+                where d.returndate is null and c.customerid = :1
+                order by d.date
+            ");
+        
+        $command->bindValue(':1', $customer);
+        $rows = $command->queryAll();
+        echo(json_encode($rows));
+    }
+
+    public function actionGetPaymentSummary(){
+        date_default_timezone_set('Asia/Jakarta');
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        //$_POST['reservations'] = [30,31,32,33];
+        //$_POST['deposit'] = [];
+
+        if(isset($_POST) && sizeof($_POST) > 0){
+            $reservations = isset($_POST['reservations']) ? $_POST['reservations'] : [0];
+            $deposits = isset($_POST['deposits']) ? $_POST['deposits'] : [0];
+            $param = implode(", ", $reservations);
+            $paramDeposit = implode(", ", $deposits);
+
+            $taxConfig = \app\models\Tax::find()->orderBy('taxid desc')->one();
+
+            $sql = 'select * from ps_room where roomid in (
+                select distinct roomid from ps_roomreservationdetail
+                where reservationdetailid in ('.$param.') and cancel = 0 and reservationdetailid not in (
+                    select reservationdetailid from ps_reservationpayment
+                )
+            ) order by name';
+
+            $rooms = \app\models\Room::findBySql($sql)->all();  
+            $json = [];
+            foreach ($rooms as $room) {
+                $obj = new \stdClass();
+                $obj->roomtypeid = $room->roomtypeid;
+                $obj->roomtype = $room->roomtype->name;
+                $obj->roomid = $room->roomid;
+                $obj->room = $room->name;
+                $obj->date = date("d-M-Y");
+                
+                $obj->days = 0;
+                $obj->tax = 0;
+                $obj->rate = 0;
+                $obj->deposit = 0;
+                $obj->discount = 0;
+                $obj->extras = [];
+
+                //Get reservations
+                $sql = 'select * from ps_roomreservationdetail
+                    where roomid = '.$room->roomid.' and reservationdetailid in ('.$param.') and cancel = 0 and reservationdetailid not in (
+                        select reservationdetailid from ps_reservationpayment
+                    )';
+                $reservations = \app\models\RoomReservationDetail::findBySql($sql)->all();  
+                foreach ($reservations as $detail) {
+                    $obj->days++;
+                    $obj->rate += $detail->rate;
+                    $obj->tax += $taxConfig->room * $detail->rate/100;
+                }
+
+                if (count($reservations) > 0){
+                    $obj->customername = $reservations[0]->reservation->customer->name;
+                    $obj->customeraddr = $reservations[0]->reservation->customer->address;
+                    $phones = $reservations[0]->reservation->customer->customerphones;
+                    if (count($phones) > 0){
+                        $obj->customerphone = $phones[0]->phone;
+                    }
+                }
+
+
+                //Get discounts
+                $sql = 'select * from ps_discountreservation where reservationdetailid in (
+                    select reservationdetailid from ps_roomreservationdetail
+                    where roomid = '.$room->roomid.' and reservationdetailid in ('.$param.') and cancel = 0 and reservationdetailid not in (
+                        select reservationdetailid from ps_reservationpayment
+                    )
+                )';
+                $discounts = \app\models\DiscountReservation::findBySql($sql)->all();  
+                foreach ($discounts as $discount) {
+                    $obj->discount += $discount->rate;
+                }
+
+                $obj->tax -= $taxConfig->room * $obj->discount/100;
+
+                //Get extra service
+                $sql = 'select * from ps_extraservice a
+                    where reservationdetailid in (
+                        select reservationdetailid from ps_roomreservationdetail
+                        where roomid = '.$room->roomid.' and reservationdetailid in ('.$param.') and cancel = 0 and reservationdetailid not in (
+                            select reservationdetailid from ps_reservationpayment
+                        )
+                    )';
+                $extras = \app\models\ExtraService::findBySql($sql)->all();  
+                foreach ($extras as $extra) {
+                    $item = new \stdClass();
+                    $item->date = $extra->date;
+                    $item->subtotal = 0;
+                    $item->details = [];
+                    foreach ($extra->extraservicedetails as $detail) {
+                        $extradetail = new \stdClass();
+                        $extradetail->service = $detail->serviceitem->name;
+                        $extradetail->rate = $detail->rate;
+                        $extradetail->qty = $detail->quantity;
+                        $extradetail->subtotal = $detail->rate * $detail->quantity;
+                        array_push($item->details, $extradetail);
+                    }
+                    array_push($obj->extras, $item);
+                }
+
+                //Get deposit
+                $sql = 'select * from ps_reservationdeposit a
+                        where depositid in ('.$paramDeposit.')
+                    ';
+                $depositModel = \app\models\ReservationDeposit::findBySql($sql)->all();  
+                foreach ($depositModel as $detail) {
+                    $obj->deposit += $detail->rate;
+                }
+
+                array_push($json, $obj);
+            }
+
+            echo(json_encode($json));
+
+        }else{
+            echo(json_encode(null));
+            return;
+        }
+    }
+
+    function actionSubmitPayment(){
+        date_default_timezone_set('Asia/Jakarta');
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        if(isset($_POST) && sizeof($_POST) > 0){
+            $reservations = isset($_POST['reservations']) ? $_POST['reservations'] : [0];
+            $deposits = isset($_POST['deposits']) ? $_POST['deposits'] : [0];
+            $param = implode(", ", $reservations);
+            $paramDeposit = implode(", ", $deposits);
+
+            if (count($reservations) < 0){
+                echo(json_encode('Reservasi tidak ditemukan.'));
+                return;
+            }
+
+            $sql = 'select distinct * from ps_customer
+                where customerid in (
+                    select distinct a.customerid from ps_roomreservation a
+                    join ps_roomreservationdetail b on a.reservationid = b.reservationid
+                    where b.cancel = 0 and b.reservationdetailid not in (
+                        select reservationdetailid from ps_reservationpayment
+                    ) and b.reservationdetailid in ('.$param.')
+                )';
+            $customer = \app\models\Customer::findBySql($sql)->one();
+
+            $connection = \Yii::$app->db;
+            $transaction = $connection->beginTransaction();
+
+            $payment = new \app\models\Payment();
+            $payment->customerid = $customer->customerid;
+            $payment->date = date("Y-m-d H:i:s");
+            if (!$payment->save()){
+                $transaction->rollback();
+                echo(json_encode($payment->getErrors()));
+                return;
+            }
+
+            foreach ($reservations as $reservationdetailid) {
+                $paymentDetail = new \app\models\ReservationPayment();
+                $paymentDetail->paymentid = $payment->paymentid;
+                $paymentDetail->reservationdetailid = $reservationdetailid;
+                if (!$paymentDetail->save()){
+                    $transaction->rollback();
+                    echo(json_encode($paymentDetail->getErrors()));
+                    return;
+                }
+            }
+            
+            $sql = 'select * from ps_reservationdeposit where depositid in ('.$paramDeposit.')';
+            $deposits = \app\models\ReservationDeposit::findBySql($sql)->all();
+            foreach ($deposits as $detail) {
+                $detail->returndate = date("Y-m-d H:i:s");
+                if (!$detail->save()){
+                    $transaction->rollback();
+                    echo(json_encode($detail->getErrors()));
+                    return;
+                }
+            }
+
+            $transaction->commit();
+
+            echo(json_encode(1));
+        }else{
+            echo(json_encode(0));
+            return;
+        }
+    }
+
+
 }
 

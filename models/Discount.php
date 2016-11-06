@@ -80,7 +80,7 @@ class Discount extends \yii\db\ActiveRecord
 
     public function getToDateFormat(){
         if ($this->to_date){
-            return date("d-M-Y", strtotime($this->from_date));
+            return date("d-M-Y", strtotime($this->to_date));
         }
 
         return 'Now';

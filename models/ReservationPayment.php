@@ -29,8 +29,8 @@ class ReservationPayment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['paymentid', 'roomreservationid'], 'required'],
-            [['paymentid', 'roomreservationid'], 'integer']
+            [['paymentid', 'reservationdetailid'], 'required'],
+            [['paymentid', 'reservationdetailid'], 'integer']
         ];
     }
 
@@ -41,7 +41,7 @@ class ReservationPayment extends \yii\db\ActiveRecord
     {
         return [
             'paymentid' => 'Paymentid',
-            'roomreservationid' => 'Roomreservationid',
+            'reservationdetailid' => 'Reservationdetailid',
         ];
     }
 
@@ -56,8 +56,8 @@ class ReservationPayment extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRoomreservation()
+    public function getRoomreservationdetail()
     {
-        return $this->hasOne(PsRoomreservation::className(), ['roomreservationid' => 'roomreservationid']);
+        return $this->hasOne(RoomReservationDetail::className(), ['reservationdetailid' => 'reservationdetailid']);
     }
 }

@@ -10,16 +10,12 @@ use Yii;
  * @property integer $customerid
  * @property string $name
  * @property string $address
- * @property string $email
- * @property string $npwp
  * @property string $locationid
- * @property string $birthdate
- * @property string $comment
- * @property string $blacklist
  *
  * @property PsLocation $location
  * @property PsCustomeridentification[] $psCustomeridentifications
  * @property PsCustomerphone[] $psCustomerphones
+ * @property PsDiscountcustomer[] $psDiscountcustomers 
  * @property PsRoomreservation[] $psRoomreservations
  */
 class Customer extends \yii\db\ActiveRecord
@@ -44,15 +40,9 @@ class Customer extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'locationid'], 'required'],
-            [['birthdate'], 'safe'],
             [['name'], 'string', 'max' => 50],
-            [['address', 'email'], 'string', 'max' => 150],
-            [['npwp'], 'string', 'max' => 25],
-            [['locationid'], 'string', 'max' => 3],
-            [['comment'], 'string', 'max' => 250],
-            [['blacklist'], 'string', 'max' => 1],
-            ['email','email'],
-            ['birthdate', 'string', 'max'=>12],
+            [['address'], 'string', 'max' => 150],
+            [['locationid'], 'string', 'max' => 3]
         ];
     }
 
@@ -65,19 +55,11 @@ class Customer extends \yii\db\ActiveRecord
             'customerid' => 'ID',
             'name' => 'Name',
             'address' => 'Address',
-            'email' => 'Email',
-            'npwp' => 'NPWP',
             'locationid' => 'Location',
-            'birthdate' => 'Birth Date',
-            'comment' => 'Comment',
-            'blacklist' => 'Blacklist',
-            'blacklistText' => 'Blacklist',
             'phoneText' => 'Phones',
             'identificationText' => 'Identifications',
-            'birthdateText' => 'Birth Date',
             'varPhone' => 'Phones',
             'varIdentification' => 'Identifications',
-
         ];
     }
 
@@ -113,14 +95,6 @@ class Customer extends \yii\db\ActiveRecord
         return $this->hasMany(RoomReservation::className(), ['customerid' => 'customerid']);
     }
 
-    public function getBlacklistText(){
-        if ($this->blacklist == 'Y'){
-            return "Yes";
-        } else{
-            return "No";
-        }
-    }
-
     public function getPhoneText(){
         $customerPhone = CustomerPhone::find()->where('customerid = :1',[':1'=>$this->customerid,])->all();
         $phones = [];
@@ -137,9 +111,5 @@ class Customer extends \yii\db\ActiveRecord
             array_push($identifications, $data->identificationtype->name . '(' . $data->identificationno . ')');
         }
         return implode('; ', $identifications);
-    }
-
-    public function getBirthdateText(){
-        return date("d-M-Y", strtotime($this->birthdate));
     }
 }

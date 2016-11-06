@@ -64,6 +64,6 @@ class ExtraServiceDetail extends \yii\db\ActiveRecord
      */
     public function getServiceitem()
     {
-        return $this->hasOne(PsServiceitem::className(), ['serviceitemid' => 'serviceitemid']);
+        return $this->hasOne(ServiceItem::className(), ['serviceitemid' => 'serviceitemid']);
     }
 }

@@ -8,12 +8,10 @@ use Yii;
  * This is the model class for table "ps_extraservice".
  *
  * @property integer $extraserviceid
- * @property integer $reservationid
- * @property integer $roomid
+ * @property integer $reservationdetailid
  * @property string $date
  *
- * @property PsRoomreservation $reservation
- * @property PsRoom $room
+ * @property PsRoomreservationdetail $reservationdetail
  * @property PsExtraservicedetail[] $psExtraservicedetails
  */
 class ExtraService extends \yii\db\ActiveRecord
@@ -32,8 +30,8 @@ class ExtraService extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['reservationid', 'roomid'], 'required'],
-            [['reservationid', 'roomid'], 'integer'],
+            [['reservationdetailid'], 'required'],
+            [['reservationdetailid'], 'integer'],
             [['date'], 'safe']
         ];
     }
@@ -45,8 +43,7 @@ class ExtraService extends \yii\db\ActiveRecord
     {
         return [
             'extraserviceid' => 'Extraserviceid',
-            'reservationid' => 'Reservationid',
-            'roomid' => 'Roomid',
+            'reservationdetailid' => 'Reservationdetailid',
             'date' => 'Date',
         ];
     }
@@ -54,24 +51,16 @@ class ExtraService extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getReservation()
+    public function getReservationdetail()
     {
-        return $this->hasOne(PsRoomreservation::className(), ['reservationid' => 'reservationid']);
+        return $this->hasOne(PsRoomreservationdetail::className(), ['reservationdetailid' => 'reservationdetailid']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRoom()
+    public function getExtraservicedetails()
     {
-        return $this->hasOne(PsRoom::className(), ['roomid' => 'roomid']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPsExtraservicedetails()
-    {
-        return $this->hasMany(PsExtraservicedetail::className(), ['extraserviceid' => 'extraserviceid']);
+        return $this->hasMany(ExtraServiceDetail::className(), ['extraserviceid' => 'extraserviceid']);
     }
 }

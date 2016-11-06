@@ -7,6 +7,10 @@ use kartik\tabs\TabsX;
 use kartik\select2\Select2;
 use kartik\slider\Slider;
 
+\yii\web\jQueryAsset::register($this);
+\app\assets\Select2Asset::register($this);
+
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\HotelSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -57,16 +61,12 @@ $this->params['breadcrumbs'][] = 'Update';
                         'template' => '{label}<div class="col-sm-9">{input}{hint}{error}</div>'
                     ])->textInput(['maxlength' => 150]).
 
+  
                     $form->field($model, 'locationid', [
                         'labelOptions'=>['class'=>'col-sm-2 control-label'], 
                         'template' => '{label}<div class="col-sm-9">{input}{hint}{error}</div>'
-                    ])->widget(Select2::classname(), [
-                        'data' =>$data,
-                        'options' => ['placeholder' => 'Select a location ...'],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ]).
+                    ])->dropDownList($data)
+                    .
 
                     $form->field($model, 'email', [
                         'labelOptions'=>['class'=>'col-sm-2 control-label'], 
@@ -237,3 +237,24 @@ $this->params['breadcrumbs'][] = 'Update';
         margin-top:10px;
     }
 </style>
+
+<?php
+
+$this->registerJs('
+
+$("#hotel-locationid").select2({
+    tags: "true",
+    placeholder: "Select location..",
+    allowClear: true,
+});
+$("#hotel-locationid").on("change", function (e) { 
+    if ($(this).val() == null || $(this).val() == ""){
+        $(this).closest(".field-hotel-locationid").find(".select2-container--default .select2-selection--single, .select2-selection .select2-selection--single").css("border-color", "#dd4b39");
+    }else{
+        $(this).closest(".field-hotel-locationid").find(".select2-container--default .select2-selection--single, .select2-selection .select2-selection--single").css("border-color", "#00a65a");
+    }
+});
+
+', \yii\web\View::POS_END);
+?>
+

@@ -10,38 +10,42 @@ use yii\grid\GridView;
 $this->title = 'Customers';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="customer-index">
 
-    <h1>
-        <img height="50px" src="<?=\Yii::$app->request->BaseUrl?>/img/customer.png"/>
-        <span style="vertical-align: middle;"><?= Html::encode($this->title) ?></span></h1>
+<section class="content-header">
+    <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?= yii\widgets\Breadcrumbs::widget([
+        'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+    ]) ?>
+</section>
 
-    <p>
-        <?= Html::a('Create Customer', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+<section class="content">
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <?= Html::a('Create Customer', ['create'], ['class' => 'btn btn-success']) ?>
+        </div>
+        <div class="box-body">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+                    'name',
+                    'address',
+                    [
+                        'attribute' => 'varPhone',
+                        'value' => 'phoneText'
+                    ],
+                    [
+                        'attribute' => 'varIdentification',
+                        'value' => 'identificationText'
+                    ],
+                    
 
-            'name',
-            'address',
-            [
-                'attribute' => 'varPhone',
-                'value' => 'phoneText'
-            ],
-            [
-                'attribute' => 'varIdentification',
-                'value' => 'identificationText'
-            ],
-            
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
-</div>
+                    ['class' => 'yii\grid\ActionColumn'],
+                ],
+            ]); ?>
+        </div>
+    </div>
+</section>

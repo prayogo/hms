@@ -28,7 +28,7 @@ class CustomerPhone extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customerid', 'phone'], 'required'],
+            [['customerid'], 'required'],
             [['customerid'], 'integer'],
             [['phone'], 'string', 'max' => 15]
         ];

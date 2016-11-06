@@ -32,9 +32,8 @@ class Payment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customerid', 'date', 'amountpaid'], 'required'],
+            [['customerid', 'date'], 'required'],
             [['customerid'], 'integer'],
-            ['amountpaid', 'string', 'max'=>20],
             [['date'], 'safe']
         ];
     }
@@ -47,8 +46,7 @@ class Payment extends \yii\db\ActiveRecord
         return [
             'paymentid' => 'ID',
             'customerid' => 'Customer',
-            'date' => 'Date',
-            'amountpaid' => 'Amount Paid',
+            'date' => 'Date'
         ];
     }
 

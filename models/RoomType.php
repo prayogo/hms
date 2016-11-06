@@ -46,10 +46,12 @@ class RoomType extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name','singleb', 'doubleb', 'extrab', 'maxchild', 'maxadult', 'childcharge', 'adultcharge', 'rate', 'weekendrate'], 'required'],
+            [['name', 'code', 'singleb', 'doubleb', 'extrab', 'maxchild', 'maxadult', 'childcharge', 'adultcharge', 'rate', 'weekendrate'], 'required'],
             [['singleb', 'doubleb', 'extrab', 'maxchild', 'maxadult', 'childcharge', 'adultcharge', 'rate', 'weekendrate'], 'integer'],
             [['name'], 'string', 'max' => 50],
+            [['code'], 'string', 'max' => 8],
             ['name', 'unique'],
+            ['code', 'unique'],
             [['description'], 'string', 'max' => 250],
             [['varchildCharge','varadultCharge','varrate'], 'string', 'max' => 20],
             [['equipments', 'discounts'], 'safe']
@@ -64,6 +66,7 @@ class RoomType extends \yii\db\ActiveRecord
         return [
             'roomtypeid' => 'ID',
             'name' => 'Name',
+            'code' => 'Code',
             'singleb' => 'Single Bed',
             'doubleb' => 'Double Bed',
             'extrab' => 'Extra Bed',

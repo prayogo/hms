@@ -25,7 +25,7 @@ class RoomController extends Controller
                         //'actions' => ['login', 'error'], // Define specific actions
                         'allow' => true, // Has access
                         'matchCallback' => function ($rule, $action) {
-                            return Yii::$app->user->identity->admin === "Y";
+                            return isset(Yii::$app->user->identity) && Yii::$app->user->identity->admin === "Y";
                         }
                     ],
                     [
@@ -91,11 +91,13 @@ class RoomController extends Controller
                     ]);  
                 }
 
-                foreach($model->discounts as $discountid){
-                    $roomDiscount = new \app\models\DiscountRoom();
-                    $roomDiscount->roomid = $model->roomid;
-                    $roomDiscount->discountid = $discountid;
-                    $roomDiscount->save();                          
+                if ($model->discounts != null){
+                    foreach($model->discounts as $discountid){
+                        $roomDiscount = new \app\models\DiscountRoom();
+                        $roomDiscount->roomid = $model->roomid;
+                        $roomDiscount->discountid = $discountid;
+                        $roomDiscount->save();                          
+                    }
                 }
 
                 $transaction->commit();
@@ -138,31 +140,40 @@ class RoomController extends Controller
                     ]);  
                 }
 
-                \app\models\DiscountRoom::deleteAll(
-                    'roomid = :1 and discountid not in (:2)',
-                    [
-                        ':1'=>$model->roomid,
-                        ':2'=>implode("','",$model->discounts)
-                    ]
-                );
-
-                foreach($model->discounts as $discountid){
-                    $exist = \app\models\DiscountRoom::find()->where(
-                        'roomid = :1 and discountid = (:2)',
+                if ($model->discounts != null){
+                    \app\models\DiscountRoom::deleteAll(
+                        'roomid = :1 and discountid not in (:2)',
                         [
                             ':1'=>$model->roomid,
-                            ':2'=>$discountid
+                            ':2'=>implode("','",$model->discounts)
                         ]
-                    )->one();
+                    );
 
-                    if ($exist == null){
-                        $roomDiscount = new \app\models\DiscountRoom();
-                        $roomDiscount->roomid = $model->roomid;
-                        $roomDiscount->discountid = $discountid;
-                        $roomDiscount->save();   
+                    foreach($model->discounts as $discountid){
+                        $exist = \app\models\DiscountRoom::find()->where(
+                            'roomid = :1 and discountid = (:2)',
+                            [
+                                ':1'=>$model->roomid,
+                                ':2'=>$discountid
+                            ]
+                        )->one();
+
+                        if ($exist == null){
+                            $roomDiscount = new \app\models\DiscountRoom();
+                            $roomDiscount->roomid = $model->roomid;
+                            $roomDiscount->discountid = $discountid;
+                            $roomDiscount->save();   
+                        }
                     }
+                }else{
+                    \app\models\DiscountRoom::deleteAll(
+                        'roomid = :1',
+                        [
+                            ':1'=>$model->roomid,
+                        ]
+                    );
                 }
-
+                
                 $transaction->commit();
                 
             } catch(Exception $e) {

@@ -13,9 +13,16 @@ use Yii;
  * @property integer $rate
  * @property string $start_date
  * @property string $end_date
+ * @property boolean $cancel 
+ * @property string $checkin 
+ * @property string $checkout 
+ * @property integer $roomstatusid 
  *
+ * @property PsExtraservice[] $psExtraservices 
+ * @property PsReservationpayment[] $psReservationpayments 
  * @property PsRoomreservation $reservation
  * @property PsRoom $room
+ * @property PsRoomstatus $roomstatus 
  */
 class RoomReservationDetail extends \yii\db\ActiveRecord
 {
@@ -34,8 +41,8 @@ class RoomReservationDetail extends \yii\db\ActiveRecord
     {
         return [
             [['reservationid', 'roomid', 'rate'], 'required'],
-            [['reservationid', 'roomid', 'rate'], 'integer'],
-            [['start_date', 'end_date'], 'safe']
+            [['reservationid', 'roomid', 'rate', 'roomstatusid'], 'integer'],
+            [['start_date', 'end_date', 'checkin', 'checkout', 'cancel'], 'safe']
         ];
     }
 
@@ -51,6 +58,10 @@ class RoomReservationDetail extends \yii\db\ActiveRecord
             'rate' => 'Rate',
             'start_date' => 'Start Date',
             'end_date' => 'End Date',
+            'checkin' => 'Check In',
+            'checkout' => 'Check Out',
+            'cancel' => 'Cancel',
+            'roomstatusid'=>'Room Status'
         ];
     }
 
@@ -59,7 +70,7 @@ class RoomReservationDetail extends \yii\db\ActiveRecord
      */
     public function getReservation()
     {
-        return $this->hasOne(PsRoomreservation::className(), ['reservationid' => 'reservationid']);
+        return $this->hasOne(RoomReservation::className(), ['reservationid' => 'reservationid']);
     }
 
     /**
@@ -67,6 +78,30 @@ class RoomReservationDetail extends \yii\db\ActiveRecord
      */
     public function getRoom()
     {
-        return $this->hasOne(PsRoom::className(), ['roomid' => 'roomid']);
+        return $this->hasOne(Room::className(), ['roomid' => 'roomid']);
     }
+
+    /** 
+     * @return \yii\db\ActiveQuery 
+     */ 
+    public function getExtraServices() 
+    { 
+        return $this->hasMany(ExtraService::className(), ['reservationdetailid' => 'reservationdetailid']); 
+    } 
+ 
+    /** 
+     * @return \yii\db\ActiveQuery 
+     */ 
+    public function getPsReservationpayments() 
+    { 
+        return $this->hasMany(PsReservationpayment::className(), ['reservationdetailid' => 'reservationdetailid']); 
+    }
+
+    /** 
+     * @return \yii\db\ActiveQuery 
+     */ 
+    public function getDiscountreservations() 
+    { 
+        return $this->hasMany(DiscountReservation::className(), ['reservationdetailid' => 'reservationdetailid']); 
+    } 
 }

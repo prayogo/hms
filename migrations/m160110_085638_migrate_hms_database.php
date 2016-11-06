@@ -141,12 +141,7 @@ class m160110_085638_migrate_hms_database extends Migration
             'customerid' => INT_PRIMARY,
             'name' => 'VARCHAR(50)',
             'address' => 'VARCHAR(150)',
-            'email' => 'VARCHAR(150)',
-            'npwp' => 'VARCHAR(25)',
             'locationid' => 'VARCHAR(3) NOT NULL',
-            'birthdate' => 'DATE',
-            'comment' => 'VARCHAR(250)',
-            'blacklist' => 'CHAR(1)',
         ], $tableOptions);
 
         $this->createTable('{{%ps_customeridentification}}', [

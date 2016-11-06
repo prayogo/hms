@@ -7,6 +7,9 @@ use kartik\datecontrol\Module;
 use kartik\datecontrol\DateControl;
 use kartik\date\DatePicker;
 
+\yii\web\jQueryAsset::register($this);
+\app\assets\Select2Asset::register($this);
+
 /* @var $this yii\web\View */
 /* @var $model app\models\Customer */
 /* @var $form yii\widgets\ActiveForm */
@@ -21,10 +24,6 @@ use kartik\date\DatePicker;
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => 150]) ?>
 
-    <?= $form->field($model, 'email')->textInput(['maxlength' => 150]) ?>
-
-    <?= $form->field($model, 'npwp')->textInput(['maxlength' => 25]) ?>
-
     <?php 
 
     $data = [];
@@ -32,16 +31,6 @@ use kartik\date\DatePicker;
 
     echo $form->field($model, 'locationid')->dropDownList($data);
 
-    ?>
-
-    <?php
-        echo $form->field($model, 'birthdate')->widget(DatePicker::classname(), [
-            'options' => ['placeholder' => 'Enter birth date ...'],
-            'pluginOptions' => [
-                'autoclose'=>true,
-                'format' => 'dd-M-yyyy',
-            ],
-        ]);
     ?>
 
     <div style="margin-top:-3px" class="form-group divphone">
@@ -88,10 +77,6 @@ use kartik\date\DatePicker;
         </div>
     </div>
 
-    <?= $form->field($model, 'comment')->textArea(['maxlength' => 250, 'style'=>'height:120px']) ?>
-
-    <?= $form->field($model, 'blacklist')->radioList(['Y' => 'Yes', 'N' => 'No'],['separator'=>'<span style="margin-right:20px"></span>']) ?>
-
 </div>
 
 <div class="box-footer">
@@ -103,6 +88,20 @@ use kartik\date\DatePicker;
 <?php
 
 $this->registerJs('
+
+$("#customer-locationid").select2({
+    tags: "true",
+    placeholder: "Select location..",
+    allowClear: true,
+});
+$("#customer-locationid").on("change", function (e) { 
+    if ($(this).val() == null || $(this).val() == ""){
+        $(this).closest(".field-customer-locationid").find(".select2-container--default .select2-selection--single, .select2-selection .select2-selection--single").css("border-color", "#dd4b39");
+    }else{
+        $(this).closest(".field-customer-locationid").find(".select2-container--default .select2-selection--single, .select2-selection .select2-selection--single").css("border-color", "#00a65a");
+    }
+});
+
 var _index = ' . $index . ';
 var _index1 = ' . $index1 . ';
 function addPhone(){
@@ -144,18 +143,6 @@ function addPhone(){
                 $( ".btnAddPhone").unbind( "click" );
                 addPhone();
             });
-
-            $(".phoneinput").blur(function(e){
-                if ($(e.currentTarget).val() == ""){
-                    $(e.currentTarget).closest(".form-group").attr("class", "form-group required has-error");
-                    $(e.currentTarget).closest(".form-group").find(".help-block").text("Phone cannot be blank.");
-                    $(e.currentTarget).closest(".divphone").find("label").css("color", "#a94442");
-                }else{
-                    $(e.currentTarget).closest(".form-group").attr("class", "form-group required has-success");
-                    $(e.currentTarget).closest(".form-group").find(".help-block").text("");
-                    $(e.currentTarget).closest(".divphone").find("label").css("color", "#3c763d");
-                }
-            });
         }
     });
     _index++;
@@ -165,7 +152,7 @@ if ($("#phone").find("input").length == 0){
     addPhone();
 }
 
-$("#w0").submit(function(e){
+/*$("#w0").submit(function(e){
     var flag = true;
     $(".phoneinput").each(function( e ) {
         if ($(this).val() == ""){
@@ -180,21 +167,20 @@ $("#w0").submit(function(e){
         }
     });
 
-
     $(".identificationinput").each(function( e ) {
-        console.log(this);
+
         if ($(this).val() == "" || 
             $(this).closest(".customer-identification-form").find("select").val() == ""){
             
             $(this).closest(".form-group").attr("class", "form-group required has-error");
-            $(this).closest(".customer-identification-form").find("select").closest(".form-group").attr("class", "form-group required has-error");
+            $(this).closest(".customer-identification-form").find("select").closest(".form-group").find(".select2-container--default .select2-selection--single, .select2-selection .select2-selection--single").css("border-color", "#dd4b39");
 
             $(this).closest(".customer-identification-form").find(".help-block").text("Identification cannot be blank.");
             $(this).closest(".customer-identification-form").find(".help-block").css("color","#a94442");
             flag = false;
         }else{
             $(this).closest(".form-group").attr("class", "form-group required has-success");
-            $(this).closest(".customer-identification-form").find("select").closest(".form-group").attr("class", "form-group required has-success");
+            $(this).closest(".customer-identification-form").find("select").closest(".form-group").find(".select2-container--default .select2-selection--single, .select2-selection .select2-selection--single").css("border-color", "#00a65a");
             $(this).closest(".customer-identification-form").find(".help-block").text("");
             $(this).closest(".customer-identification-form").find(".help-block").css("color","#3c763d");
         }
@@ -208,7 +194,7 @@ $("#w0").submit(function(e){
     });
 
     return flag;
-});
+});*/
 
 $(".btnDeletePhone").click(function (elm){ 
     if ($("#phone").find("input").length >1){

@@ -64,6 +64,7 @@ class DiscountController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->from_date = date("Y-m-d", strtotime(str_replace("/","-",$model->from_date)));
+            $model->to_date = $model->to_date ? date("Y-m-d", strtotime(str_replace("/","-",$model->to_date))) : null;
 
             $model->amount = intval(str_replace(".", "", $model->amount));
 
@@ -102,9 +103,13 @@ class DiscountController extends Controller
         $model = $this->findModel($id);
         $model->amount = $model->percent ? $model->percent : $model->rate;
         $model->discountby = $model->percent ? 'P' : 'R';
+        $model->from_date = date("d-M-Y", strtotime($model->from_date));
+        $model->to_date = $model->to_date ? date("d-M-Y", strtotime($model->to_date)) : null;
+
 
         if ($model->load(Yii::$app->request->post())) {
             $model->from_date = date("Y-m-d", strtotime(str_replace("/","-",$model->from_date)));
+            $model->to_date = $model->to_date ? date("Y-m-d", strtotime(str_replace("/","-",$model->to_date))) : null;
 
             $model->amount = intval(str_replace(".", "", $model->amount));
 

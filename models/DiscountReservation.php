@@ -8,9 +8,10 @@ use Yii;
  * This is the model class for table "ps_discountreservation".
  *
  * @property integer $discountid
- * @property integer $reservationid
+ * @property integer $reservationdetailid
+ * @property integer $rate
  *
- * @property PsRoomreservation $reservation
+ * @property PsRoomreservationdetail $reservationdetail
  */
 class DiscountReservation extends \yii\db\ActiveRecord
 {
@@ -28,8 +29,8 @@ class DiscountReservation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['discountid', 'reservationid'], 'required'],
-            [['discountid', 'reservationid'], 'integer']
+            [['discountid', 'reservationdetailid', 'rate'], 'required'],
+            [['discountid', 'reservationdetailid', 'rate'], 'integer']
         ];
     }
 
@@ -40,15 +41,24 @@ class DiscountReservation extends \yii\db\ActiveRecord
     {
         return [
             'discountid' => 'Discountid',
-            'reservationid' => 'Reservationid',
+            'reservationdetailid' => 'Reservationdetailid',
+            'rate' => 'Rate',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getReservation()
+    public function getReservationdetail()
     {
-        return $this->hasOne(PsRoomreservation::className(), ['reservationid' => 'reservationid']);
+        return $this->hasOne(PsRoomreservationdetail::className(), ['reservationdetailid' => 'reservationdetailid']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDiscount()
+    {
+        return $this->hasOne(Discount::className(), ['discountid' => 'discountid']);
     }
 }

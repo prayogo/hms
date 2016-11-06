@@ -27,7 +27,7 @@ use yii\widgets\ActiveForm;
     	'identificationtypeid', 'name');
 
 	echo Html::activeDropDownList($model, '[' . $index . ']identificationtypeid', $data, [
-		'style'=>'width:100%;min-width:150px;',
+		'style'=>'width:150px;',
 		'class'=>'identificationddl'
 	]);
 

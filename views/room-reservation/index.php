@@ -2,10 +2,6 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use kartik\datecontrol\Module;
-use kartik\datecontrol\DateControl;
-use kartik\date\DatePicker;
-use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RoomReservationSearch */
@@ -14,192 +10,324 @@ use kartik\select2\Select2;
 $this->title = 'Room Reservations';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="room-reservation-index">
 
-    <h1>
-        <img height="50px" src="<?=\Yii::$app->request->BaseUrl?>/img/reservation.png"/>
-        <span style="vertical-align: middle;"><?= Html::encode($this->title) ?></span></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<section class="content-header">
+  <h1><?= Html::encode($this->title) ?></h1>
+  <?= yii\widgets\Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+  ]) ?>
+</section>
 
-    <p>
-        <?= Html::a('Create Room Reservation', ['create'], ['class' => 'btn btn-success']) ?>
-        <button type="button" class="btn btn-success" id="refresh-reservation"><i class="fa fa-refresh"></i> Load</button>
-    </p>
-<div class="row">
-    <div class="col-md-3">
-        
+<section class="content">
+    <div class="box box-default">
+        <div class="box-body">
 
-        <div style="margin-bottom:10px">
-        <?php 
-        $data = [];
-        $data += yii\helpers\ArrayHelper::map(\app\models\Room::find()->asArray()->orderBy('name')->all(), 'roomid', 'name');
-        echo Select2::widget([
-            'id' => 'room-id', 
-            'name' => 'Reservation[Room]',
-            'data' => $data,
-            'options' => [
-                'placeholder' => 'Select a room...', 
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-        ?>
+            <div class="row">
+                <div class="col-md-3">
+                    <div style="margin-bottom:10px">
+                        <select class="form-control" id="roomid">
+                            <option></option>
+                            <?php
+                                $data = \app\models\Room::find()->orderBy('name')->all();
+                                if (isset($data)){
+                                    foreach ($data as $item) {
+                                        echo '<option value='.$item->roomid.'>'.$item->name.'</option>';
+                                    }
+                                }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom:10px">
+                        <select class="form-control" id="roomtypeid">
+                            <option></option>
+                            <?php
+                                $data = \app\models\RoomType::find()->orderBy('name')->all();
+                                if (isset($data)){
+                                    foreach ($data as $item) {
+                                        echo '<option value='.$item->roomtypeid.'>'.$item->name.'</option>';
+                                    }
+                                }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom:10px">
+                    <select class="form-control" multiple="multiple" id="equipmentid">
+                        <?php
+                            $data = \app\models\Equipment::find()->orderBy('name')->all();
+                            if (isset($data)){
+                                foreach ($data as $item) {
+                                    echo '<option value='.$item->equipmentid.'>'.$item->name.'</option>';
+                                }
+                            }
+                        ?>
+                    </select>
+                    </div>
+
+                    <div class="well well-sm" style="background-color:#fff;margin-bottom:10px;text-align:center;">
+                        <div id="calendardate">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:10px">
+                        <input type="button" value="Load" class="btn btn-danger" id="btnLoad"/>
+                        <a class="btn btn-success" href="<?= yii\helpers\Url::toRoute("room-reservation/create-reservation") ?>">Reservasi Baru</a>
+                    </div>
+                </div>
+
+                <div class="col-md-9" id="roomContainer">
+                    
+                </div>
+            </div>
+
         </div>
-
-        <div style="margin-bottom:10px">
-        <?php 
-        $data = [];
-        $data += yii\helpers\ArrayHelper::map(\app\models\RoomType::find()->asArray()->orderBy('name')->all(), 'roomtypeid', 'name');
-        echo Select2::widget([
-            'name' => 'Reservation[RoomType]',
-            'id' => 'room-type-id', 
-            'data' => $data,
-            'options' => [
-                'placeholder' => 'Select a room type...', 
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-        ?>
-        </div>
-
-        <div style="margin-bottom:10px">
-        <?php 
-        $data = [];
-        $data += yii\helpers\ArrayHelper::map(\app\models\Equipment::find()->asArray()->orderBy('name')->all(), 'equipmentid', 'name');
-        echo Select2::widget([
-            'name' => 'Reservation[Equipment]', 
-            'id' => 'equipment-id', 
-            'data' => $data,
-            'options' => [
-                'placeholder' => 'Select equipments...', 
-                'multiple' => true
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-        ?>
-        </div>
-
-        <div class="well well-sm" style="background-color:#fff;margin-bottom:10px;text-align:-webkit-center !important;text-align:center;">
-        <?php
-            date_default_timezone_set("Asia/Jakarta");
-            echo DatePicker::widget([
-                'name' => 'Reservation[Room]',
-                'id' => 'date-text',
-                'type' => DatePicker::TYPE_INLINE,
-                'value' => date("D, d-M-Y"),
-                'pluginOptions' => [
-                    'format' => 'D, dd-M-yyyy',
-                    'hideInput'=>1, 
-                ],
-                'pluginEvents' => [
-                    'beforeShowDay' => 'function(e){ alert(1); }'
-                ],
-            ]);
-        ?>
-        </div>
-
     </div>
-    <div class="col-md-9">
-    <table class="table table-striped table-bordered" id="table-room" style="width:100%;">
-      <thead>
-        <tr><th colspan="7" class="text-center" id="header" style="background-color: rgb(239, 239, 239); font-size:16px">Sun, 14-Dec-2014</th></tr>
-        <tr>
-          <th class="text-left hidden">RoomId</th> 
-          <th class="text-left">Room</th>
-          <th class="text-left">Floor</th>
-          <th class="text-left">Room Type</th>
-          <th class="text-left">Rate</th>
-          <th class="text-left hidden">ReservationId</th>
-          <th class="text-left">Date</th>
-          <th class="text-left"></th>
-        </tr>
-      </thead>
-      <tbody>
-        
-      </tbody>
-    </table>
-    </div>
-</div>
-</div>
-<?php
+</section>
 
-$this->registerJs("
-    $('#refresh-reservation').click(function(){
-        loadroom();
+
+<script type="text/javascript">  
+function Init(){
+    $('#roomid').select2({
+        placeholder: 'Select a room...',
+        allowClear: true
     });
 
-    function loadroom(){
-        var room = $('#room-id').val();
-        var roomtype = $('#room-type-id').val();
-        var equipments = $('#equipment-id').val();
-        var date = $('#date-text').val();
-        if (date == ''){
-            date = '".date("D, d-M-Y")."'
-        }
-        
-        $('#table-room tbody').empty();
-        $('#table-room tbody').append('<tr id=\'loader\'><td colspan=7 class=text-center><img style=\'text-align:center\' width=\'30px\' src=\'".yii\helpers\BaseUrl::base()."/css/loading.gif\'></td></tr>');
+    $('#roomtypeid').select2({
+        placeholder: 'Select a room type...',
+        allowClear: true
+    });
 
+    $('#equipmentid').select2({
+        placeholder: 'Select equipments...',
+        multiple: true
+    });
+
+    var dp = $('#calendardate').datepicker({
+        todayHighlight: true,
+        todayBtn: "linked",
+        format: 'dd-M-yyyy',
+        defaultDate: true
+    });
+
+    dp.on("changeDate", function(e){
+        $('#btnLoad').click();
+    });
+
+    $('#calendardate').datepicker('setDate', new Date());
+    
+    $('#btnLoad').click(function(e){
+        $('#roomContainer').empty();
+        $('#roomContainer').append('<img src="<?=\Yii::$app->request->BaseUrl?>/img/ajax-loader.gif"/>');
         $.ajax({
-            url: '".yii\helpers\Url::toRoute('room-reservation/reservation-list')."',
+            url: '<?= yii\helpers\Url::toRoute("room-reservation/get-reservation-list") ?>',
             method: 'POST',
             dataType: 'json',
-            data: {'date':date, 'room':room, 'roomtype':roomtype, 'equipments':equipments},
+            data: {
+                'date':moment($('#calendardate').datepicker('getDate')).format('YYYY-MM-DD'), 
+                'room':$('#roomid').val(), 
+                'roomtype':$('#roomtypeid').val(), 
+                'equipments':$('#equipmentid').val()
+            },
             success: function(result){
+                $('#roomContainer').empty();
+                var floors = $.unique($.map(result, function(item, i){
+                    return item.floorid;
+                }));
 
-                if ($('#date-text').val() == ''){
-                    $('#header').html('".date("D, d-M-Y")."');
-                }else{
-                    $('#header').html($('#date-text').val());   
-                }
+                $(floors).each(function(i, floor){
+                    var rooms = $(result).filter(function(i, item){
+                        return item.floorid == floor;
+                    });
 
-                if(result.length > 0){
+                    if (typeof(rooms) == 'undefined' || rooms == null)
+                        return;
 
-                    for(var i = 0; i < result.length; i++){
-                        var roomid = result[i].roomid != null ? result[i].roomid : '-';
-                        var room = result[i].name != null ? result[i].name : '-';
-                        var floor = result[i].floor != null ? result[i].floor : '-';
-                        var roomtype = result[i].roomtype != null ? result[i].roomtype : '-';
-                        var rate = result[i].rate != null ? result[i].rate : '-';
-                        var roomreservationid = result[i].roomreservationid != null ? result[i].roomreservationid : '';
-                        var date = (result[i].startdate != null ? result[i].startdate : '') + ' - ';
-                        date = date + (result[i].enddate != null ? result[i].enddate : '');
+                    var container = $('<div/>').addClass('reservation-container');
+                    container.append('<h4 class="header-tag">'+rooms[0].floor+'</h4>');
+                    var row = $('<div class="row"/>');
 
-                        var style = 'background-color:'+result[i].color;
-                        var action = '';
-                        if (roomreservationid != ''){
-                            action = '<a href=\'".yii\helpers\Url::toRoute('room-reservation/view')."?id='+roomreservationid+'\' title=View><span class=\'glyphicon glyphicon-eye-open\'></span></a>';
+                    $(rooms).each(function(j, room){
+                        var innerDiv = $('<div class="inner"/>');
+                        innerDiv.append('<div><span class="room-tag">'+room.room+'</span></div>');
+                        innerDiv.append('<div><span class="room-type-tag">'+room.roomtype+'</span></div>');
+                        if (room.customerid != null){
+                            innerDiv.append('<div><a href="<?= yii\helpers\Url::toRoute("room-reservation/view") ?>?id='+room.customerid+'" class="customer-tag">'+(room.customer != null ? room.customer : '-')+'</a></div>');    
+                        }else{
+                            innerDiv.append('<div><a class="customer-tag">-</a></div>');
                         }
+                        
+                        var boxDiv = $('<div class="small-box"/>').css('background-color', room.statuscolor).append(innerDiv);
 
-
-                        $('#table-room tbody').append('<tr><td class=hidden>'+roomid+'</td><td>'+room+' <span class=label style='+style+'>'+result[i].status+'</span></td><td>'+floor+'</td><td>'+roomtype+'</td><td>'+rate+'</td><td class=hidden>'+roomreservationid+'</td><td>'+date+'</td><td>'+action+'</td></tr>');
-
+                        boxDiv.append($('<input class="roomid" type="hidden"/>').val(room.roomid));
+                        boxDiv.append($('<input class="reservationdetailid" type="hidden"/>').val(room.reservationdetailid));
+                        if (room.checkin == null){
+                            boxDiv.append('<a class="small-box-footer checkin" style="font-size:12px;cursor:pointer">Check In <i class="fa fa-arrow-circle-right"></i></a>');    
+                        }else{
+                            boxDiv.append('<a class="small-box-footer checkout" style="font-size:12px;cursor:pointer">Check Out <i class="fa fa-arrow-circle-right"></i></a>');    
+                        }
+                        boxDiv.append('<a class="small-box-footer cancel" style="font-size:12px;cursor:pointer">Cancel <i class="fa fa-times-circle"></i></a>');    
+                        row.append($('<div class="col-sm-2"/>').append(boxDiv));
+                        //$('#roomContainer').append(room.roomstatus);
+                    });
+                    container.append(row);
+                    $('#roomContainer').append(container);
+                });
+            },
+            error: function(err){
+                $('#roomContainer').empty();
+                alert(err.statusText);
+                if (typeof(err.responseJSON) != 'undefined'){
+                    if (typeof(err.responseJSON.message) != 'undefined'){
+                        console.log(err.responseJSON.message)
                     }
-                } else{
-                    $('#table-room tbody').append('<tr><td colspan=7>No results found.</td></tr>');
-
                 }
-
-                $('#loader').remove();
             }
         });
-    }
 
-    $( document ).ready(function() {
-        loadroom();
     });
 
+    $('#roomContainer').on("click", ".checkin", function(e){
+        var reservationdetailid = $(this).siblings('.reservationdetailid').val();
+        $.ajax({
+            url: '<?= yii\helpers\Url::toRoute("room-reservation/check-in") ?>',
+            method: 'POST',
+            dataType: 'json',
+            data: {"reservationdetailid":reservationdetailid},
+            success: function(result){
+                if (result == 1){
+                    $('#btnLoad').click();
+                }else{
+                    if (typeof(result) == "object"){
+                        var errorMessage = "";
+                        $(result).each(function(i, item){
+                            for(var n in item){
+                                errorMessage += result[n].join(". ");
+                            }
+                        });
 
-", \yii\web\View::POS_END);
+                        alert(errorMessage);
+                    }else{
+                        alert(result);
+                    }
+                }
+            },
+            error: function(err){
+                alert(err.statusText);
+                if (typeof(err.responseJSON) != 'undefined'){
+                    if (typeof(err.responseJSON.message) != 'undefined'){
+                        console.log(err.responseJSON.message)
+                    }
+                }
+            }
+        });     
+    });
+
+    $('#roomContainer').on("click", ".cancel", function(e){
+        var r = confirm("Konfirmasi cancel reservasi?");
+        if (!r) {
+            return;
+        }
+
+        var reservationdetailid = $(this).siblings('.reservationdetailid').val();
+        $.ajax({
+            url: '<?= yii\helpers\Url::toRoute("room-reservation/cancel-reservation") ?>',
+            method: 'POST',
+            dataType: 'json',
+            data: {"reservationdetailid":reservationdetailid},
+            success: function(result){
+                if (result == 1){
+                    $('#btnLoad').click();
+                }else{
+                    if (typeof(result) == "object"){
+                        var errorMessage = "";
+                        $(result).each(function(i, item){
+                            for(var n in item){
+                                errorMessage += result[n].join(". ");
+                            }
+                        });
+
+                        alert(errorMessage);
+                    }else{
+                        alert(result);
+                    }
+                }
+            },
+            error: function(err){
+                alert(err.statusText);
+                if (typeof(err.responseJSON) != 'undefined'){
+                    if (typeof(err.responseJSON.message) != 'undefined'){
+                        console.log(err.responseJSON.message)
+                    }
+                }
+            }
+        });     
+    });
+
+    $('#roomContainer').on("click", ".checkout", function(e){
+        var reservationdetailid = $(this).siblings('.reservationdetailid').val();
+        $.ajax({
+            url: '<?= yii\helpers\Url::toRoute("room-reservation/check-out") ?>',
+            method: 'POST',
+            dataType: 'json',
+            data: {"reservationdetailid":reservationdetailid},
+            success: function(result){
+                if (result == 1){
+                    $('#btnLoad').click();
+                }else{
+                    if (typeof(result) == "object"){
+                        var errorMessage = "";
+                        $(result).each(function(i, item){
+                            for(var n in item){
+                                errorMessage += result[n].join(". ");
+                            }
+                        });
+
+                        alert(errorMessage);
+                    }else{
+                        alert(result);
+                    }
+                }
+            },
+            error: function(err){
+                alert(err.statusText);
+                if (typeof(err.responseJSON) != 'undefined'){
+                    if (typeof(err.responseJSON.message) != 'undefined'){
+                        console.log(err.responseJSON.message)
+                    }
+                }
+            }
+        });     
+    });
+}
+</script>
+
+<?php
+    $this->registerJs("
+        $( document ).ready(function() {
+            Init();
+            $('#btnLoad').click();
+        });
+    ", \yii\web\View::POS_END);
 ?>
 
 <style>
     .hidden{
         display:none;
+    }
+    .reservation-container {
+        margin-bottom: 10px;
+    }
+    .reservation-container .room-tag {
+        font-size:18px;font-weight:bold;color:white;
+    }
+    .reservation-container .room-type-tag, .reservation-container .customer-tag {
+        font-size:12px;color:white;
+    }
+    .reservation-container .header-tag {
+        font-size: 15px;
+    }
+    .datepicker-inline{
+        width: 100% !important
     }
 </style>

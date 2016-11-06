@@ -1,14 +1,18 @@
 <?php
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 use app\assets\AppAsset;
 use app\assets\VendorAsset;
+use app\assets\Select2Asset;
 use kartik\icons\Icon;
 use yii\helpers\Url;
 
 
 /* @var $this \yii\web\View */
 /* @var $content string */
+\yii\web\jQueryAsset::register($this);
 VendorAsset::register($this);
+Select2Asset::register($this);
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -100,9 +104,6 @@ AppAsset::register($this);
 
 </body>
 
-
-
-
   <body class="hold-transition sidebar-mini layout-boxed skin-red-light">
     <div class="wrapper">
 
@@ -127,47 +128,39 @@ AppAsset::register($this);
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
               
-              <!-- User Account Menu -->
-              <li class="dropdown user user-menu">
-                <!-- Menu Toggle Button -->
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <!-- The user image in the navbar-->
-                  <img src="<?=\Yii::$app->request->BaseUrl?>/AdminLTE/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                  <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                  <span class="hidden-xs">Alexander Pierce</span>
-                </a>
-                <ul class="dropdown-menu">
-                  <!-- The user image in the menu -->
-                  <li class="user-header">
-                    <img src="<?=\Yii::$app->request->BaseUrl?>/AdminLTE/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                    <p>
-                      Alexander Pierce - Web Developer
-                      <small>Member since Nov. 2012</small>
-                    </p>
-                  </li>
-                  <!-- Menu Body -->
-                  <li class="user-body">
-                    <div class="col-xs-4 text-center">
-                      <a href="#">Followers</a>
-                    </div>
-                    <div class="col-xs-4 text-center">
-                      <a href="#">Sales</a>
-                    </div>
-                    <div class="col-xs-4 text-center">
-                      <a href="#">Friends</a>
-                    </div>
-                  </li>
-                  <!-- Menu Footer-->
-                  <li class="user-footer">
-                    <div class="pull-left">
-                      <a href="#" class="btn btn-default btn-flat">Profile</a>
-                    </div>
-                    <div class="pull-right">
-                      <a href="#" class="btn btn-default btn-flat">Sign out</a>
-                    </div>
-                  </li>
-                </ul>
-              </li>
+              <?php if (isset(Yii::$app->user->identity)){ ?>
+                <!-- User Account Menu -->
+                <li class="dropdown user user-menu">
+                  <!-- Menu Toggle Button -->
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <!-- The user image in the navbar-->
+                    <img src="<?=\Yii::$app->request->BaseUrl?>/img/businessman-xxl.png" class="user-image" alt="User Image">
+                    <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                    <span class="hidden-xs"><?= Yii::$app->user->identity->displayname ?></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <!-- The user image in the menu -->
+                    <li class="user-header">
+                      <img src="<?=\Yii::$app->request->BaseUrl?>/img/businessman-xxl.png" class="img-circle" alt="User Image">
+                      <p>
+                        <?= Yii::$app->user->identity->displayname ?>
+                        <small><?= Yii::$app->user->identity->email ?></small>
+                      </p>
+                    </li>
+                    <!-- Menu Footer-->
+                    <li class="user-footer">
+                      <div class="pull-right">
+                        <?php $form = ActiveForm::begin(['action' => ['site/logout']]); ?>
+                          <input type="submit" class="btn btn-default btn-flat" value="Sign out"/>
+                        <?php ActiveForm::end(); ?>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+              <?php } else { ?>
+                <li><a href="site/login" >Sign In</a></li>
+              <?php } ?>
+
             </ul>
           </div>
         </nav>
@@ -177,25 +170,18 @@ AppAsset::register($this);
 
         <section class="sidebar">
 
+        <?php if (isset(Yii::$app->user->identity)){ ?>
           <div class="user-panel">
             <div class="pull-left image">
-              <img src="<?=\Yii::$app->request->BaseUrl?>/AdminLTE/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+              <img src="<?=\Yii::$app->request->BaseUrl?>/img/businessman-xxl.png" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-              <p>Alexander Pierce</p>
+              <p><?= Yii::$app->user->identity->displayname ?></p>
               <!-- Status -->
               <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
           </div>
-
-          <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-              <input type="text" name="q" class="form-control" placeholder="Search...">
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-              </span>
-            </div>
-          </form>
+        <?php } ?>
 
           <ul class="sidebar-menu">
             <li class="header">HEADER</li>
@@ -232,6 +218,8 @@ AppAsset::register($this);
                 <li class="divider"></li>
                 <li><a href="<?= Url::toRoute('room-reservation/index') ?>">Reservasi</a></li>
                 <li><a href="<?= Url::toRoute('payment/index') ?>">Pembayaran</a></li>
+                <li class="divider"></li>
+                <li><a href="<?= Url::toRoute('payment-history/index') ?>">History Pembayaran</a></li>
               </ul>
             </li>
             <?php } ?>
@@ -260,7 +248,7 @@ AppAsset::register($this);
           Anything you want
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2015 <a href="#">Company</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2015 <a href="">Dyva Hotel</a>.</strong> All rights reserved.
       </footer>
 
       <!-- Control Sidebar -->
@@ -338,7 +326,5 @@ AppAsset::register($this);
         margin-top: 2px !important;
         margin-bottom: 2px !important;
     }
-    .select2-selection__rendered{
-      margin-top: 1px !important
-    }
 </style>
+

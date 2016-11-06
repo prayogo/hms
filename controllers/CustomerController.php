@@ -78,7 +78,6 @@ class CustomerController extends Controller
     public function actionCreate()
     {
         $model = new Customer();
-        $model->blacklist = 'N';
         $index = 1;
         $index1 = 1;
         $customerPhone = null;
@@ -86,58 +85,47 @@ class CustomerController extends Controller
         $model->locationid = "IDN";
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->birthdate = date("Y-m-d", strtotime($model->birthdate));
+            //$model->birthdate = date("Y-m-d", strtotime($model->birthdate));
 
             $acc = true;
 
             if (!isset($_POST["CustomerPhone"])){
-                $acc = false;
-                $phonemodel = new CustomerPhone();
-                $phonemodel->addError('phone', 'Phone cannot be blank.');
-                $customerPhone[] = $phonemodel;
+                //$acc = false;
+                //$phonemodel = new CustomerPhone();
+                //$phonemodel->addError('phone', 'Phone cannot be blank.');
+                //$customerPhone[] = $phonemodel;
             }else{
                 $phones = $_POST["CustomerPhone"];
                 foreach($phones as $phone){
-                    $phonemodel = new CustomerPhone();
-                    $phonemodel->phone = $phone["phone"];
-                    if ($phonemodel->phone == ""){
-                        $phonemodel->addError('phone', 'Phone cannot be blank.');
-                        $acc = false;
-                    } else if (strlen($phonemodel->phone) > 15){
-                        $phonemodel->addError('phone', 'Phone should contain at most 15 characters.');
-                        $acc = false;
+                    if(isset($phone["phone"]) && $phone["phone"] != ""){
+                        $phonemodel = new CustomerPhone();
+                        $phonemodel->phone = $phone["phone"];
+                        $customerPhone[] = $phonemodel;
                     }
-                    $customerPhone[] = $phonemodel;
                 }
             }
 
             if (!isset($_POST["CustomerIdentification"])){
-                $acc = false;
-                $identificationmodel = new CustomerIdentification();
-                $identificationmodel->addError('identificationno', 'Identification cannot be blank.');
-                $customerIdentification[] = $identificationmodel;
+                //$acc = false;
+                //$identificationmodel = new CustomerIdentification();
+                //$identificationmodel->addError('identificationno', 'Identification cannot be blank.');
+                //$customerIdentification[] = $identificationmodel;
             }else{
                 $identifications = $_POST["CustomerIdentification"];
                 foreach($identifications as $identification){
-                    $identificationmodel = new CustomerIdentification();
-                    $identificationmodel->identificationtypeid = $identification["identificationtypeid"];
-                    $identificationmodel->identificationno = $identification["identificationno"];
-
-                    if ($identificationmodel->identificationtypeid == "" 
-                        || $identificationmodel->identificationno == ""){
-                        $identificationmodel->addError('identificationno', 'Identification cannot be blank.');
-                        $acc = false;
-                    } else if (strlen($identificationmodel->identificationno) > 25){
-                        $identificationmodel->addError('identificationno', 'Identification should contain at most 25 characters.');
-                        $acc = false;
+                    if (isset($identification["identificationtypeid"]) && $identification["identificationtypeid"] > 0){
+                        if (isset($identification["identificationno"]) && $identification["identificationno"] != ""){
+                            $identificationmodel = new CustomerIdentification();
+                            $identificationmodel->identificationtypeid = $identification["identificationtypeid"];
+                            $identificationmodel->identificationno = $identification["identificationno"];
+                            $customerIdentification[] = $identificationmodel;
+                        }
                     }
-
-                    $customerIdentification[] = $identificationmodel;
                 }
             }
 
             if (!$acc){
-                $model->birthdate = date("d-M-Y", strtotime($model->birthdate));
+                //$model->birthdate = date("d-M-Y", strtotime($model->birthdate));
                 return $this->render('create', [
                     'model' => $model,
                     'index' => $index,
@@ -151,14 +139,18 @@ class CustomerController extends Controller
             $transaction = $connection->beginTransaction(); 
 
             $model->save();
-            foreach($customerPhone as $phonemodel){
-                $phonemodel->customerid = $model->customerid;
-                $phonemodel->save();   
+            if (isset($phonemodel)){
+                foreach($customerPhone as $phonemodel){
+                    $phonemodel->customerid = $model->customerid;
+                    $phonemodel->save();   
+                }
             }
 
-            foreach($customerIdentification as $identificationmodel){
-                $identificationmodel->customerid = $model->customerid;
-                $identificationmodel->save();   
+            if (isset($identificationmodel)){
+                foreach($customerIdentification as $identificationmodel){
+                    $identificationmodel->customerid = $model->customerid;
+                    $identificationmodel->save();   
+                }
             }
 
             $transaction->commit();
@@ -191,58 +183,47 @@ class CustomerController extends Controller
         $model->locationid = "IDN";
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->birthdate = date("Y-m-d", strtotime($model->birthdate));
+            //$model->birthdate = date("Y-m-d", strtotime($model->birthdate));
 
             $acc = true;
 
             if (!isset($_POST["CustomerPhone"])){
-                $acc = false;
-                $phonemodel = new CustomerPhone();
-                $phonemodel->addError('phone', 'Phone cannot be blank.');
-                $customerPhone[] = $phonemodel;
+                //$acc = false;
+                //$phonemodel = new CustomerPhone();
+                //$phonemodel->addError('phone', 'Phone cannot be blank.');
+                //$customerPhone[] = $phonemodel;
             }else{
                 $phones = $_POST["CustomerPhone"];
                 foreach($phones as $phone){
-                    $phonemodel = new CustomerPhone();
-                    $phonemodel->phone = $phone["phone"];
-                    if ($phonemodel->phone == ""){
-                        $phonemodel->addError('phone', 'Phone cannot be blank.');
-                        $acc = false;
-                    } else if (strlen($phonemodel->phone) > 15){
-                        $phonemodel->addError('phone', 'Phone should contain at most 15 characters.');
-                        $acc = false;
+                    if (isset($phone["phone"]) && $phone["phone"] != ""){
+                        $phonemodel = new CustomerPhone();
+                        $phonemodel->phone = $phone["phone"];
+                        $customerPhone[] = $phonemodel;
                     }
-                    $customerPhone[] = $phonemodel;
                 }
             }
 
             if (!isset($_POST["CustomerIdentification"])){
-                $acc = false;
-                $identificationmodel = new CustomerIdentification();
-                $identificationmodel->addError('identificationno', 'Identification cannot be blank.');
-                $customerIdentification[] = $identificationmodel;
+                //$acc = false;
+                //$identificationmodel = new CustomerIdentification();
+                //$identificationmodel->addError('identificationno', 'Identification cannot be blank.');
+                //$customerIdentification[] = $identificationmodel;
             }else{
                 $identifications = $_POST["CustomerIdentification"];
                 foreach($identifications as $identification){
-                    $identificationmodel = new CustomerIdentification();
-                    $identificationmodel->identificationtypeid = $identification["identificationtypeid"];
-                    $identificationmodel->identificationno = $identification["identificationno"];
-
-                    if ($identificationmodel->identificationtypeid == "" 
-                        || $identificationmodel->identificationno == ""){
-                        $identificationmodel->addError('identificationno', 'Identification cannot be blank.');
-                        $acc = false;
-                    } else if (strlen($identificationmodel->identificationno) > 25){
-                        $identificationmodel->addError('identificationno', 'Identification should contain at most 25 characters.');
-                        $acc = false;
+                    if (isset($identification["identificationtypeid"]) && $identification["identificationtypeid"] > 0){
+                        if (isset($identification["identificationno"]) && $identification["identificationno"] != ""){
+                            $identificationmodel = new CustomerIdentification();
+                            $identificationmodel->identificationtypeid = $identification["identificationtypeid"];
+                            $identificationmodel->identificationno = $identification["identificationno"];
+                            $customerIdentification[] = $identificationmodel;
+                        }
                     }
-
-                    $customerIdentification[] = $identificationmodel;
                 }
             }
 
             if (!$acc){
-                $model->birthdate = date("d-M-Y", strtotime($model->birthdate));
+                //$model->birthdate = date("d-M-Y", strtotime($model->birthdate));
                 return $this->render('create', [
                     'model' => $model,
                     'index' => $index,
@@ -271,15 +252,20 @@ class CustomerController extends Controller
                 ]
             );
 
-            foreach($customerPhone as $phonemodel){
-                $phonemodel->customerid = $model->customerid;
-                $phonemodel->save();   
+            if (isset($phonemodel)){
+                foreach($customerPhone as $phonemodel){
+                    $phonemodel->customerid = $model->customerid;
+                    $phonemodel->save();   
+                }
             }
 
-            foreach($customerIdentification as $identificationmodel){
-                $identificationmodel->customerid = $model->customerid;
-                $identificationmodel->save();   
+            if (isset($identificationmodel)){
+                foreach($customerIdentification as $identificationmodel){
+                    $identificationmodel->customerid = $model->customerid;
+                    $identificationmodel->save();   
+                }
             }
+            
 
             $transaction->commit();
 
@@ -293,8 +279,6 @@ class CustomerController extends Controller
             $customerIdentification = \app\models\CustomerIdentification::find()->where(
                 'customerid = :1',[':1'=>$model->customerid,]
             )->all();
-
-            $model->birthdate = date("d-M-Y", strtotime($model->birthdate));
 
             return $this->render('update', [
                 'model' => $model,
